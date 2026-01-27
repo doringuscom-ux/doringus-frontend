@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Plane, Coffee, Sparkles, Dumbbell, Laptop, Gamepad2, TrendingUp, ChevronRight } from 'lucide-react';
 import { useAdmin } from '../../context/AdminContext';
+import { getImageUrl } from '../../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 
 const ICON_MAP = {
@@ -30,10 +31,14 @@ const CreatorCategories = () => {
     if (categories.length === 0) return null;
 
     const activeCategories = categories.filter(c => c.status === 'Active');
-    const filteredInfluencers = influencers.filter(inf =>
-        inf.category?.toLowerCase() === activeTab?.toLowerCase() &&
-        inf.status === 'Approved'
-    );
+    const filteredInfluencers = influencers.filter(inf => {
+        const matchesCategory = inf.category?.toLowerCase() === activeTab?.toLowerCase();
+        // Support Approved status, lowercase approved, or missing status (for legacy)
+        const isApproved = !inf.status ||
+            inf.status.toLowerCase() === 'approved' ||
+            inf.status === 'Approved';
+        return matchesCategory && isApproved;
+    });
 
     return (
         <section className="py-20 bg-surface-secondary relative overflow-hidden">
@@ -100,7 +105,7 @@ const CreatorCategories = () => {
                                         <div className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-gray-100 border border-gray-50 hover:border-primary/20 transition-all duration-500 hover:-translate-y-2">
                                             <div className="aspect-[4/5] rounded-[2rem] mb-6 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                                                 <img
-                                                    src={inf.profileImage}
+                                                    src={getImageUrl(inf.profileImage)}
                                                     alt={inf.name}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                                 />

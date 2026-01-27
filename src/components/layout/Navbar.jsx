@@ -5,8 +5,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 import { useAdmin } from '../../context/AdminContext';
 
-import logo from '../../assets/doringus-logo.jpeg';
-
 const Navbar = ({ darkMode = false }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -54,8 +52,8 @@ const Navbar = ({ darkMode = false }) => {
                         : 'bg-transparent border-transparent')
                     }`}>
                     {/* Logo */}
-                    <Link to="/" className="flex items-center gap-3 group">
-                        <img src={logo} alt="Doringus Logo" className="h-10 md:h-12 w-auto object-contain" />
+                    <Link to="/" className={`text-2xl font-black tracking-tighter italic uppercase transition-colors ${logoColor}`}>
+                        DORINGUS
                     </Link>
 
                     {/* Desktop Menu */}

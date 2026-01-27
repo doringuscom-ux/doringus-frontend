@@ -23,9 +23,12 @@ const UserManagement = () => {
         const roles = ['Influencer', 'Brand'];
         const randomName = names[Math.floor(Math.random() * names.length)];
         const randomRole = roles[Math.floor(Math.random() * roles.length)];
+        const randomNum = Math.floor(Math.random() * 100);
 
         addUser({
-            name: `${randomName} ${Math.floor(Math.random() * 100)}`,
+            name: `${randomName} ${randomNum}`,
+            username: `${randomName.toLowerCase().replace(' ', '')}${randomNum}`,
+            password: 'Password123!',
             email: `${randomName.toLowerCase().replace(' ', '.')}@example.com`,
             role: randomRole,
             status: 'Active',

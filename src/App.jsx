@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import About from './pages/About';
 import AdminLayout from './components/admin/layout/AdminLayout';
@@ -26,47 +26,45 @@ import ScrollToTop from './components/ScrollToTop';
 function App() {
   return (
     <AdminProvider>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
+      <ScrollToTop />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
 
-          {/* Influencer List - support both singular and plural */}
-          <Route path="/influencer" element={<InfluencerList />} />
-          <Route path="/influencers" element={<InfluencerList />} />
+        {/* Influencer List - support both singular and plural */}
+        <Route path="/influencer" element={<InfluencerList />} />
+        <Route path="/influencers" element={<InfluencerList />} />
 
-          {/* Influencer Detail - support both with and without category */}
-          <Route path="/influencer/:category/:influencerName" element={<InfluencerDetail />} />
-          <Route path="/influencer/:influencerName" element={<InfluencerDetail />} />
-          <Route path="/influencers/:category/:influencerName" element={<InfluencerDetail />} />
-          <Route path="/influencers/:influencerName" element={<InfluencerDetail />} />
+        {/* Influencer Detail - support both with and without category */}
+        <Route path="/influencer/:category/:influencerName" element={<InfluencerDetail />} />
+        <Route path="/influencer/:influencerName" element={<InfluencerDetail />} />
+        <Route path="/influencers/:category/:influencerName" element={<InfluencerDetail />} />
+        <Route path="/influencers/:influencerName" element={<InfluencerDetail />} />
 
-          {/* Auth Routes */}
-          <Route path="/login" element={<InfluencerLogin />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/register/influencer" element={<InfluencerRegister />} />
-          <Route path="/influencer/dashboard" element={<InfluencerDashboard />} />
+        {/* Auth Routes */}
+        <Route path="/login" element={<InfluencerLogin />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/register/influencer" element={<InfluencerRegister />} />
+        <Route path="/influencer/dashboard" element={<InfluencerDashboard />} />
 
-          {/* Admin Auth */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+        {/* Admin Auth */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Protected Admin Routes */}
-          <Route path="/admin" element={<ProtectedRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route index element={<AdminDashboard />} />
-              <Route path="users" element={<UserManagement />} />
-              <Route path="brands" element={<CategoryManagement />} />
-              <Route path="influencers" element={<InfluencerManagement />} />
-              <Route path="inquiries" element={<InquiryManagement />} />
-              <Route path="videos" element={<VideosManagement />} />
-              <Route path="settings" element={<Settings />} />
-              {/* Add more admin routes here */}
-            </Route>
+        {/* Protected Admin Routes */}
+        <Route path="/admin" element={<ProtectedRoute />}>
+          <Route element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="brands" element={<CategoryManagement />} />
+            <Route path="influencers" element={<InfluencerManagement />} />
+            <Route path="inquiries" element={<InquiryManagement />} />
+            <Route path="videos" element={<VideosManagement />} />
+            <Route path="settings" element={<Settings />} />
+            {/* Add more admin routes here */}
           </Route>
-        </Routes>
-      </Router>
+        </Route>
+      </Routes>
     </AdminProvider>
   );
 }

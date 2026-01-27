@@ -1,6 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useAdmin } from '../context/AdminContext';
+import { getImageUrl } from '../utils/axiosConfig';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import {
@@ -114,7 +115,7 @@ const InfluencerDetail = () => {
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                     <img
-                                        src={influencer.profileImage}
+                                        src={getImageUrl(influencer.profileImage)}
                                         alt=""
                                         className="w-full h-full object-cover opacity-10 blur-xl"
                                     />
@@ -247,7 +248,7 @@ const InfluencerDetail = () => {
                                             key={idx}
                                             className={`rounded-3xl overflow-hidden bg-gray-100 aspect-[4/5] shadow-sm ${idx % 3 === 0 ? 'md:col-span-2 md:aspect-[16/9]' : ''}`}
                                         >
-                                            <img src={img} alt="" className="w-full h-full object-cover" />
+                                            <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" />
                                         </motion.div>
                                     )) || [1, 2, 3, 4, 5].map(idx => (
                                         <div key={idx} className="bg-gray-50 rounded-3xl aspect-[4/5] animate-pulse" />

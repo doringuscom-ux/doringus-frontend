@@ -1,8 +1,6 @@
 import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowUpRight, Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-import logo from '../../assets/doringus-logo.jpeg';
-
 const FooterLink = ({ href, children }) => (
     <li>
         <a
@@ -48,8 +46,8 @@ const Footer = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <a href="/" className="inline-block mb-6 group">
-                                <img src={logo} alt="Doringus Logo" className="h-12 w-auto object-contain rounded-xl" />
+                            <a href="/" className="inline-block mb-8">
+                                <span className="text-3xl font-black tracking-tighter italic uppercase text-white">DORINGUS</span>
                             </a>
                             <p className="text-gray-400 text-lg leading-relaxed max-w-md">
                                 The leading marketplace for the modern creator economy. We bridge the gap between visionary brands and authentic voices to create impactful digital experiences.

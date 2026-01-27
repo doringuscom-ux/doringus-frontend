@@ -1,13 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useAdmin } from '../../context/AdminContext';
-import {
-    Plus, Edit2, Trash2, Star, Link as LinkIcon, ExternalLink,
-    Search, Filter, CheckCircle, XCircle, MoreVertical,
-    TrendingUp, Award, Instagram, Youtube, DollarSign,
-    Check,
-    Users
-} from 'lucide-react';
+import { Plus, Edit2, Trash2, Star, Link as LinkIcon, ExternalLink, Search, Filter, CheckCircle, XCircle, MoreVertical, TrendingUp, Award, Instagram, Youtube, DollarSign, Check, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getImageUrl } from '../../utils/axiosConfig';
 
 const InfluencerManagement = () => {
     const { influencers = [], categories = [], addInfluencer, updateInfluencer, deleteInfluencer, updateInfluencerStatus } = useAdmin() || {};
@@ -26,6 +21,7 @@ const InfluencerManagement = () => {
         followers: '',
         isFeatured: false,
         status: 'Approved',
+        password: '',
         instagramFollowers: '',
         youtubeSubscribers: '',
         pricePerReel: '',
@@ -44,6 +40,7 @@ const InfluencerManagement = () => {
             followers: '',
             isFeatured: false,
             status: 'Approved',
+            password: '',
             instagramFollowers: '',
             youtubeSubscribers: '',
             pricePerReel: '',
@@ -66,7 +63,8 @@ const InfluencerManagement = () => {
             setIsAdding(false);
             resetForm();
         } catch (error) {
-            alert("Action failed: " + error.message);
+            console.error("Action failed:", error);
+            // alert("Action failed: " + error.message); // Silent fail or toast in future
         } finally {
             setActionLoading(null);
         }
@@ -76,7 +74,7 @@ const InfluencerManagement = () => {
         if (!id) return;
         setActionLoading(id);
         const res = await updateInfluencerStatus(id, 'Approved');
-        if (res && !res.success) alert(res.message);
+        if (res && !res.success) console.error(res.message);
         setActionLoading(null);
     };
 
@@ -86,8 +84,8 @@ const InfluencerManagement = () => {
 
         setActionLoading(id);
         const res = await deleteInfluencer(id);
-        if (res && !res.success) {
-            alert("Error: " + res.message);
+        if (res && res.success === false) {
+            console.error("Deletion failed:", res.message);
         }
         setActionLoading(null);
     };
@@ -207,6 +205,12 @@ const InfluencerManagement = () => {
                                                         {categories.map(cat => <option key={cat?.id} value={cat?.id}>{cat?.label}</option>)}
                                                     </select>
                                                 </div>
+                                                {!editingId && (
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Access Password</label>
+                                                        <input required type="password" value={formData.password || ''} onChange={e => setFormData({ ...formData, password: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="Minimum 8 characters" />
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -267,7 +271,7 @@ const InfluencerManagement = () => {
                             >
                                 <div className="relative">
                                     <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden border-[6px] border-white shadow-xl rotate-3 group-hover:rotate-0 transition-transform duration-500">
-                                        <img src={inf?.profileImage} alt="" className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(inf?.profileImage)} alt="" className="w-full h-full object-cover" />
                                     </div>
                                     {inf?.isFeatured && (
                                         <div className="absolute -top-3 -right-3 bg-primary text-white p-2.5 rounded-2xl shadow-xl shadow-primary/40 -rotate-12 group-hover:rotate-0 transition-transform duration-500">

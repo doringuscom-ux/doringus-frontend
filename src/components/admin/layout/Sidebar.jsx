@@ -15,8 +15,6 @@ import {
 import { motion } from 'framer-motion';
 import { useAdmin } from '../../../context/AdminContext';
 
-import logo from '../../../assets/doringus-logo.jpeg';
-
 const Sidebar = () => {
     const context = useAdmin() || {};
     const { logout } = context;
@@ -42,8 +40,8 @@ const Sidebar = () => {
     return (
         <aside className="fixed left-0 top-0 h-screen w-80 bg-white/90 backdrop-blur-2xl border-r border-gray-100 hidden md:flex flex-col z-50 p-8">
             <div className="mb-16">
-                <div className="flex flex-col gap-4 cursor-pointer" onClick={() => navigate('/admin')}>
-                    <img src={logo} alt="Doringus Logo" className="h-12 w-auto object-contain self-start" />
+                <div className="flex flex-col gap-2 cursor-pointer" onClick={() => navigate('/admin')}>
+                    <span className="text-3xl font-black tracking-tighter italic uppercase text-gray-900">DORINGUS</span>
                     <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mt-1">Admin OS</p>
                     </div>

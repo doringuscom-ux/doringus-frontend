@@ -184,12 +184,13 @@ const InfluencerRegister = () => {
                                                             onChange={handleInputChange}
                                                             className="w-full pl-6 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold appearance-none cursor-pointer"
                                                         >
+                                                            <option value="" disabled>Select Category</option>
                                                             {categories.length > 0 ? (
                                                                 categories.map(cat => (
                                                                     <option key={cat.id} value={cat.id}>{cat.label}</option>
                                                                 ))
                                                             ) : (
-                                                                <option value="fashion">Fashion</option>
+                                                                <option value="fashion">Fashion (Default)</option>
                                                             )}
                                                         </select>
                                                         <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none">▼</div>

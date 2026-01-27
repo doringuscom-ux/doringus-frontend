@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useAdmin } from '../../context/AdminContext';
-import {
+import * as Icons from 'lucide-react';
+
+const {
     Plus, Edit2, Trash2, CheckCircle, XCircle,
-    Sparkles, Image as ImageIcon, LayoutGrid,
+    Sparkles, Image: ImageIcon, LayoutGrid,
     Search, Filter, ExternalLink
-} from 'lucide-react';
+} = Icons;
 import { motion, AnimatePresence } from 'framer-motion';
 
 const CategoryManagement = () => {
@@ -137,7 +139,10 @@ const CategoryManagement = () => {
 
                         <div className="flex items-start justify-between relative z-10 mb-8">
                             <div className="p-4 bg-gray-50 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                                <Sparkles className="w-8 h-8" />
+                                {(() => {
+                                    const IconComponent = Icons[cat.icon] || Icons.Sparkles;
+                                    return <IconComponent className="w-8 h-8" />;
+                                })()}
                             </div>
                             <div className="flex gap-2">
                                 <button onClick={() => handleEdit(cat)} className="p-3 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all">

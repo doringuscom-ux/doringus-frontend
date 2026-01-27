@@ -55,8 +55,9 @@ export const AdminProvider = ({ children }) => {
     }, []);
 
     // Fetch initial data
-    const fetchData = async () => {
-        setLoading(true);
+    const fetchData = async (isBackground = false) => {
+        console.log(`[Context] Fetching data (Background: ${isBackground}) using BaseURL: ${api.defaults.baseURL}`);
+        if (!isBackground) setLoading(true);
 
         try {
             console.log("[Context] Testing Backend Health...");
@@ -90,8 +91,20 @@ export const AdminProvider = ({ children }) => {
 
             const results = await Promise.allSettled(requests);
 
-            if (results[0].status === 'fulfilled' && Array.isArray(results[0].value.data)) setCategories(results[0].value.data);
-            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) setInfluencers(results[1].value.data);
+            if (results[0].status === 'fulfilled' && Array.isArray(results[0].value.data)) {
+                console.log(`[Context] Loaded ${results[0].value.data.length} categories`);
+                setCategories(results[0].value.data);
+            } else {
+                console.warn("[Context] Categories data is not an array:", results[0].value?.data);
+                setCategories([]);
+            }
+            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) {
+                console.log(`[Context] Loaded ${results[1].value.data.length} influencers`);
+                setInfluencers(results[1].value.data);
+            } else {
+                console.warn("[Context] Influencers data is not an array:", results[1].value?.data);
+                setInfluencers([]);
+            }
             if (results[2].status === 'fulfilled' && Array.isArray(results[2].value.data)) setInquiries(results[2].value.data);
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
@@ -107,8 +120,8 @@ export const AdminProvider = ({ children }) => {
 
     useEffect(() => {
         fetchData();
-        // Refresh every 30 seconds to keep system health updated
-        const interval = setInterval(fetchData, 30000);
+        // Refresh every 30 seconds to keep system health updated - background refresh
+        const interval = setInterval(() => fetchData(true), 30000);
         return () => clearInterval(interval);
     }, [user?.token, user?.role]);
 

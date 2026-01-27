@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { Lock, User, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import logo from '../../assets/doringus-logo.jpeg';
 
 const AdminLogin = () => {
     const [username, setUsername] = useState('');
@@ -31,7 +30,7 @@ const AdminLogin = () => {
         <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="flex flex-col items-center">
-                    <img src={logo} alt="Doringus Logo" className="h-16 w-auto object-contain mb-6" />
+                    <span className="text-4xl font-black tracking-tighter italic uppercase text-gray-900 mb-6">DORINGUS</span>
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                     Admin Portal

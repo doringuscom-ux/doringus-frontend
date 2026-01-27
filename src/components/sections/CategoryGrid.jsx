@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import { getImageUrl } from '../../utils/axiosConfig';
 
 const CategoryGrid = ({ categories }) => {
     return (
@@ -19,7 +20,7 @@ const CategoryGrid = ({ categories }) => {
                             >
                                 {/* Background Image */}
                                 <img
-                                    src={cat.image || "https://images.unsplash.com/photo-1514525253361-bee243870d22?q=80&w=400&h=400&fit=crop"}
+                                    src={getImageUrl(cat.image) || "https://images.unsplash.com/photo-1514525253361-bee243870d22?q=80&w=400&h=400&fit=crop"}
                                     alt={cat.label}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60 group-hover:opacity-100"
                                 />

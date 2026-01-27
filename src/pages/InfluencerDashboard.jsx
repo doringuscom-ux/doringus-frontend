@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAdmin } from '../context/AdminContext';
 import { User, DollarSign, Video, Mail, LogOut, Instagram, Youtube, CheckCircle, Upload } from 'lucide-react';
-import api from '../utils/axiosConfig';
+import api, { getImageUrl } from '../utils/axiosConfig';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
@@ -104,7 +104,7 @@ const InfluencerDashboard = () => {
                             <div className="text-center mb-10">
                                 <div className="w-24 h-24 bg-primary/5 rounded-full mx-auto mb-6 flex items-center justify-center overflow-hidden border-4 border-white shadow-lg shadow-primary/10">
                                     {user.profileImage ? (
-                                        <img src={user.profileImage} alt="" className="w-full h-full object-cover" />
+                                        <img src={getImageUrl(user.profileImage)} alt="" className="w-full h-full object-cover" />
                                     ) : (
                                         <User className="w-10 h-10 text-primary" />
                                     )}
@@ -296,7 +296,7 @@ const InfluencerDashboard = () => {
                                             <div className="flex flex-col md:flex-row gap-8 items-center">
                                                 <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-2xl shadow-primary/20">
                                                     {user.profileImage ? (
-                                                        <img src={user.profileImage} alt={user.name} className="w-full h-full object-cover" />
+                                                        <img src={getImageUrl(user.profileImage)} alt={user.name} className="w-full h-full object-cover" />
                                                     ) : (
                                                         <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                                                             <User className="w-12 h-12 text-gray-400" />
@@ -556,7 +556,7 @@ const InfluencerDashboard = () => {
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                                 {user.gallery?.map((img, idx) => (
                                                     <div key={idx} className="relative group aspect-[4/5] rounded-2xl overflow-hidden border-2 border-gray-100 shadow-lg">
-                                                        <img src={img} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                                                        <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                                             <button
                                                                 onClick={() => handleRemoveImage(img)}
