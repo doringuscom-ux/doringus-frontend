@@ -65,7 +65,7 @@ export const AdminProvider = ({ children }) => {
                 const health = await api.get('/health');
                 console.log("[Context] Health Response:", health.data);
 
-                if (health.data.engine === 'Doringus-Core-v2' || health.data.version === '2.0.1') {
+                if (health.data.engine === 'DO RING US-Core-v3-Enterprise' || health.data.version === '2.0.1') {
                     setServerStatus('Online');
                 } else if (health.data.status === 'ok') {
                     setServerStatus('Online');
@@ -92,10 +92,10 @@ export const AdminProvider = ({ children }) => {
             const results = await Promise.allSettled(requests);
 
             if (results[0].status === 'fulfilled' && Array.isArray(results[0].value.data)) {
-                console.log(`[Context] Loaded ${results[0].value.data.length} categories`);
+                console.log(`[Context] Categories Loaded successfully: ${results[0].value.data.length} items`);
                 setCategories(results[0].value.data);
             } else {
-                console.warn("[Context] Categories data is not an array:", results[0].value?.data);
+                console.error("[Context] Categories Fetch Failed or data is not an array:", results[0]);
                 setCategories([]);
             }
             if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) {

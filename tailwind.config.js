@@ -11,7 +11,7 @@ export default {
                 display: ['"Outfit"', 'sans-serif'],
             },
             colors: {
-                primary: '#FF2D55',
+                primary: '#D5B60A',
                 secondary: '#8B5CF6',
                 accent: '#FFB800',
                 surface: {
@@ -37,7 +37,10 @@ export default {
                     '100%': { transform: 'translateX(-100%)' },
                 },
             },
+
+
         },
     },
+
     plugins: [],
 }

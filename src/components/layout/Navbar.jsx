@@ -53,7 +53,7 @@ const Navbar = ({ darkMode = false }) => {
                     }`}>
                     {/* Logo */}
                     <Link to="/" className={`text-2xl font-black tracking-tighter italic uppercase transition-colors ${logoColor}`}>
-                        DORINGUS
+                        DO RING US
                     </Link>
 
                     {/* Desktop Menu */}

@@ -50,7 +50,7 @@ const WhyDoringus = () => {
                         <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 to-purple-500/20 rounded-[2.5rem] blur-3xl -z-10" />
                         <img
                             src={dashboardImg}
-                            alt="Doringus Dashboard"
+                            alt="DO RING US Dashboard"
                             className="rounded-[2.5rem] shadow-2xl border border-gray-100 w-full transform hover:scale-[1.02] transition-transform duration-700"
                         />
                         {/* Floating Badge */}
@@ -73,7 +73,7 @@ const WhyDoringus = () => {
                         viewport={{ once: true }}
                     >
                         <span className="text-primary font-black uppercase tracking-[0.2em] text-sm mb-4 block">
-                            Doringus Understands
+                            DO RING US Understands
                         </span>
                         <h2 className="text-4xl lg:text-6xl font-black font-display text-gray-900 mb-8 leading-tight">
                             Smart Brands Choose <br />
@@ -81,7 +81,7 @@ const WhyDoringus = () => {
                         </h2>
 
                         <p className="text-gray-500 text-xl font-medium leading-relaxed mb-8">
-                            We don't just connect you; we understand your business goals. Doringus is built on the philosophy that influencer marketing should be measurable, scalable, and transparent.
+                            We don't just connect you; we understand your business goals. DO RING US is built on the philosophy that influencer marketing should be measurable, scalable, and transparent.
                         </p>
 
                         <div className="space-y-4 mb-10">

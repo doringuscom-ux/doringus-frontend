@@ -5,36 +5,40 @@ import { getImageUrl } from '../utils/axiosConfig';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import {
-    Star, MapPin, Clock, CheckCircle, Video, Image, Trophy,
-    MessageCircle, Play, ChevronRight, Mail, Briefcase, Share2, ArrowLeft,
-    Instagram, Youtube, Twitter, Globe, Send, User, Phone, Calendar
+    Star, MapPin, CheckCircle, Video, Image, Trophy,
+    Play, Share2, Instagram, Youtube, Send, User, Globe, Mail, Phone, Briefcase, ExternalLink,
+    ChevronRight, Clock, DollarSign, ChevronLeft
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Simplified Instagram Reel Component
+// Instagram Reel Embed optimized for Screenshot 1 style
 const ReelEmbed = ({ url }) => {
     const getShortcode = (url) => {
-        const match = url.match(/\/(?:p|reels?)\/([A-Za-z0-9_-]+)/);
-        return match ? match[1] : null;
+        if (!url) return null;
+        if (url.includes('instagram.com')) {
+            const match = url.match(/\/(?:p|reels?)\/([A-Za-z0-9_-]+)/);
+            return match ? match[1] : null;
+        }
+        return url;
     };
 
     const shortcode = getShortcode(url);
 
     if (!shortcode) return (
-        <div className="relative aspect-[9/16] h-[500px] shrink-0 bg-gray-900 rounded-2xl flex items-center justify-center text-white/10 uppercase text-[10px] font-bold tracking-widest leading-none rotate-90 w-full">
-            Invalid Link
+        <div className="w-[320px] h-[580px] bg-neutral-900 rounded-xl flex items-center justify-center border border-white/10">
+            <Instagram className="w-10 h-10 text-white/20" />
         </div>
     );
 
     return (
-        <div className="relative aspect-[9/16] h-[500px] shrink-0 bg-black rounded-2xl overflow-hidden border border-white/5 shadow-2xl">
+        <div className="w-[320px] h-[580px] bg-white rounded-xl overflow-hidden shadow-2xl border border-gray-200">
             <iframe
-                src={`https://www.instagram.com/reels/${shortcode}/embed`}
+                src={`https://www.instagram.com/p/${shortcode}/embed/`}
                 className="w-full h-full border-none"
                 frameBorder="0"
                 scrolling="no"
                 allowTransparency="true"
-                allow="autoplay; encrypted-media"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
             />
         </div>
     );
@@ -43,7 +47,7 @@ const ReelEmbed = ({ url }) => {
 const InfluencerDetail = () => {
     const { influencerName } = useParams();
     const { influencers, loading, addInquiry } = useAdmin();
-    const [formStatus, setFormStatus] = useState('idle'); // idle, sending, success, error
+    const [formStatus, setFormStatus] = useState('idle');
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -52,23 +56,30 @@ const InfluencerDetail = () => {
         message: ''
     });
 
+    const heroScrollRef = useRef(null);
+
+    const scroll = (direction) => {
+        const { current } = heroScrollRef;
+        if (current) {
+            const scrollAmount = 350; // Card width + gap
+            current.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
     const influencer = influencers.find(inf => inf.username === influencerName);
 
     if (loading) return null;
 
     if (!influencer) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50 uppercase tracking-tighter">
-                <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-6xl font-black text-gray-900 mb-4"
-                >
-                    404
-                </motion.h1>
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center p-8">
+                <h1 className="text-4xl font-black mb-4">404</h1>
                 <p className="text-gray-500 mb-8 font-bold">Creator Not Found</p>
-                <Link to="/" className="bg-primary text-white px-10 py-4 rounded-full font-black shadow-2xl hover:scale-105 transition-all">
-                    Back to Discovery
+                <Link to="/" className="bg-primary text-white px-8 py-3 rounded-full font-bold">
+                    Back to discovery
                 </Link>
             </div>
         );
@@ -81,8 +92,6 @@ const InfluencerDetail = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setFormStatus('sending');
-
-        // Add inquiry to context
         const result = await addInquiry({
             ...formData,
             influencerUsername: influencer.username,
@@ -99,345 +108,277 @@ const InfluencerDetail = () => {
     };
 
     return (
-        <div className="bg-white min-h-screen font-sans selection:bg-primary/20">
-            <Navbar />
+        <div className="bg-[#fcfcfc] min-h-screen font-sans selection:bg-primary/20">
+            <Navbar darkMode={true} />
 
-            <main className="pt-24">
-                {/* Hero Section - Reels Display (Focus) */}
-                <div className="relative h-[650px] overflow-hidden bg-[#050505] flex items-center">
-                    {/* Dynamic Reels Display */}
-                    <div className="absolute inset-0 z-0">
-                        <div className="flex gap-10 px-12 py-16 animate-marquee hover:pause transition-all duration-700">
-                            {influencer.instagramReels && influencer.instagramReels.length > 0 ? (
-                                [...influencer.instagramReels, ...influencer.instagramReels, ...influencer.instagramReels].map((reel, idx) => (
-                                    <ReelEmbed key={idx} url={reel} />
-                                ))
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <img
-                                        src={getImageUrl(influencer.profileImage)}
-                                        alt=""
-                                        className="w-full h-full object-cover opacity-10 blur-xl"
-                                    />
-                                    <p className="absolute text-white/20 font-black uppercase tracking-[1em] text-4xl">No Transmission</p>
+            {/* SCREENSHOT 1: DARK HERO REELS WITH ARROWS */}
+            <section className="bg-[#1a1a1a] pb-40 pt-32 overflow-hidden relative group">
+                {/* Navigation Arrows */}
+                <button
+                    onClick={() => scroll('left')}
+                    className="absolute left-10 top-1/2 -translate-y-1/2 z-[60] w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/20 hover:scale-110 active:scale-95 hidden lg:flex"
+                >
+                    <ChevronLeft className="w-8 h-8" />
+                </button>
+                <button
+                    onClick={() => scroll('right')}
+                    className="absolute right-10 top-1/2 -translate-y-1/2 z-[60] w-14 h-14 bg-white/10 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-white/20 hover:scale-110 active:scale-95 hidden lg:flex"
+                >
+                    <ChevronRight className="w-8 h-8" />
+                </button>
+
+                <div className="container mx-auto px-4">
+                    <div
+                        ref={heroScrollRef}
+                        className="flex gap-6 overflow-x-auto no-scrollbar py-8 snap-x snap-mandatory touch-pan-x scroll-smooth"
+                    >
+                        {influencer.instagramReels && influencer.instagramReels.length > 0 ? (
+                            influencer.instagramReels.map((reel, idx) => (
+                                <div key={idx} className="snap-center shrink-0">
+                                    <ReelEmbed url={reel} />
                                 </div>
-                            )}
-                        </div>
+                            ))
+                        ) : (
+                            [1, 2, 3, 4].map(idx => (
+                                <div key={idx} className="w-[320px] h-[580px] bg-neutral-800 rounded-xl animate-pulse shrink-0 snap-center" />
+                            ))
+                        )}
                     </div>
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent z-10" />
                 </div>
+            </section>
 
-                {/* New Info Bar Section - Moved from Hero for clarity */}
-                <div className="bg-[#050505] border-b border-white/5 pb-12">
-                    <div className="container mx-auto px-6 lg:px-16">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-col md:flex-row justify-between items-end gap-10"
-                        >
-                            <div className="max-w-2xl">
-                                <div className="flex items-center gap-4 mb-4">
-                                    <span className="bg-primary text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
-                                        {influencer.category}
-                                    </span>
-                                    <div className="flex items-center gap-1.5 text-yellow-400">
-                                        <Star className="w-4 h-4 fill-current" />
-                                        <span className="font-bold text-sm tracking-widest">{influencer.rating || '4.9'}</span>
-                                    </div>
-                                </div>
-                                <h1 className="text-6xl lg:text-8xl font-black text-white mb-4 tracking-tighter italic">
-                                    {influencer.name}<span className="text-primary">.</span>
+            <main className="container mx-auto px-4 lg:px-12 -mt-32">
+                {/* PROFILE INFO CARD - CLEANED & ATTRACTIVE */}
+                <div className="bg-white rounded-[4rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.08)] border border-gray-50 p-10 lg:p-14 mb-16 flex flex-col lg:flex-row items-center justify-between gap-12 relative z-50">
+                    <div className="flex flex-col md:flex-row items-center gap-12">
+                        <div className="relative group">
+                            <div className="absolute -inset-1 bg-gradient-to-tr from-primary to-orange-400 rounded-full blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+                            <div className="relative w-48 h-48 rounded-full overflow-hidden border-8 border-white shadow-2xl bg-gray-50">
+                                <img
+                                    src={getImageUrl(influencer.profileImage)}
+                                    alt={influencer.name}
+                                    className="w-full h-full object-cover transform transition duration-700 group-hover:scale-110"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-6 text-center md:text-left">
+                            <div className="space-y-4">
+                                <h1 className="text-5xl lg:text-7xl font-black text-[#1e293b] tracking-tighter leading-none italic uppercase">
+                                    {influencer.name}
                                 </h1>
-                                <p className="text-xl text-white/40 font-bold tracking-widest uppercase">@{influencer.username}</p>
+                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-6">
+                                    <div className="flex items-center gap-2 text-primary font-bold text-lg">
+                                        <Instagram className="w-6 h-6" />
+                                        @{influencer.username}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[#94a3b8] font-bold text-lg">
+                                        <MapPin className="w-5 h-5" />
+                                        {influencer.location || 'Global'}
+                                    </div>
+                                    <div className="flex items-center gap-1.5 text-orange-500 font-black px-4 py-1.5 bg-orange-50 rounded-full border border-orange-100/50">
+                                        <Star className="w-5 h-5 fill-current" />
+                                        {influencer.rating || '5.0'}
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div className="flex gap-16 pb-2">
-                                <div className="flex flex-col">
-                                    <span className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter">{influencer.followers}</span>
-                                    <span className="text-[10px] uppercase tracking-[.3em] text-white/30 font-black mt-2">Reach</span>
-                                </div>
-                                <div className="flex flex-col border-l border-white/10 pl-16">
-                                    <span className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter">{influencer.engagement || '5.2%'}</span>
-                                    <span className="text-[10px] uppercase tracking-[.3em] text-white/30 font-black mt-2">Impact</span>
-                                </div>
-                                <div className="flex flex-col border-l border-white/10 pl-16 hidden lg:flex">
-                                    <span className="text-3xl lg:text-5xl font-black text-white italic tracking-tighter">{influencer.location || 'London'}</span>
-                                    <span className="text-[10px] uppercase tracking-[.3em] text-white/30 font-black mt-2">Base</span>
-                                </div>
-                            </div>
-                        </motion.div>
+                    <div className="shrink-0 w-full lg:w-auto">
+                        <button
+                            onClick={() => document.getElementById('inquiry-form')?.scrollIntoView({ behavior: 'smooth' })}
+                            className="group relative w-full lg:w-auto px-12 py-7 bg-[#1e293b] text-white rounded-[2rem] font-black text-xl hover:bg-primary transition-all duration-500 flex items-center justify-center gap-4 overflow-hidden shadow-2xl hover:shadow-primary/40"
+                        >
+                            <span className="relative z-10">Collaborate Now</span>
+                            <ChevronRight className="w-6 h-6 transform group-hover:translate-x-1 transition-transform relative z-10" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-[goldenrod] to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        </button>
                     </div>
                 </div>
 
-                <div className="container mx-auto px-4 lg:px-16 -mt-12 relative z-10 pb-24">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 pb-24">
+                    {/* LEFT COLUMN: ABOUT & PRICING */}
+                    <div className="lg:col-span-7 space-y-12">
+                        {/* ABOUT SECTION */}
+                        <div className="bg-white p-10 rounded-[3rem] border border-gray-50 shadow-sm space-y-8">
+                            <div className="flex items-center gap-4">
+                                <User className="w-6 h-6 text-primary" />
+                                <h2 className="text-2xl font-black tracking-tight">About the Creator</h2>
+                            </div>
+                            <p className="text-xl text-gray-500 font-medium leading-relaxed">
+                                {influencer.bio || "Crafting digital stories that resonate. Specializing in high-impact visual content and authentic brand collaborations."}
+                            </p>
 
-                        {/* Left Content Side */}
-                        <div className="lg:col-span-7 space-y-16">
-
-                            {/* Bio & About */}
-                            <section className="bg-white p-10 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-50">
-                                <h2 className="text-2xl font-black mb-6 flex items-center gap-3">
-                                    <User className="w-6 h-6 text-primary" />
-                                    About the Creator
-                                </h2>
-                                <p className="text-xl text-gray-600 leading-relaxed font-medium">
-                                    {influencer.bio || "Crafting digital stories that resonate. Specializing in high-impact visual content and authentic brand collaborations."}
-                                </p>
-
-                                <div className="mt-8 flex flex-wrap gap-3">
-                                    {influencer.skills?.map(skill => (
-                                        <span key={skill} className="px-5 py-2.5 bg-gray-50 text-gray-700 rounded-2xl text-sm font-bold border border-gray-100 italic">
-                                            #{skill.replace(/\s+/g, '')}
-                                        </span>
-                                    ))}
-                                </div>
-
-                                {/* Social Channels */}
-                                <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {(influencer.instagramLink || influencer.socialLinks?.instagram) && (
-                                        <a href={influencer.instagramLink || `https://instagram.com/${influencer.socialLinks.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-6 rounded-3xl bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:scale-[1.02] transition-transform shadow-lg shadow-pink-500/20">
-                                            <Instagram className="w-10 h-10" />
-                                            <div>
-                                                <div className="font-black text-xl">{influencer.instagramFollowers || influencer.followers}</div>
-                                                <div className="text-xs uppercase tracking-widest font-bold opacity-80 italic">Instagram Feed</div>
-                                            </div>
-                                        </a>
-                                    )}
-                                    {(influencer.youtubeLink || influencer.socialLinks?.youtube) && (
-                                        <a href={influencer.youtubeLink || `https://youtube.com/@${influencer.socialLinks.youtube}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 p-6 rounded-3xl bg-primary text-white hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20">
-                                            <Youtube className="w-10 h-10" />
-                                            <div>
-                                                <div className="font-black text-xl">{influencer.youtubeSubscribers || 'Premium'}</div>
-                                                <div className="text-xs uppercase tracking-widest font-bold opacity-80 italic">YouTube Channel</div>
-                                            </div>
-                                        </a>
-                                    )}
-                                </div>
-                            </section>
-
-                            {/* Pricing Section */}
-                            <section className="bg-gray-900 p-10 rounded-[2.5rem] text-white">
-                                <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
-                                    <Trophy className="w-6 h-6 text-primary" />
-                                    Pricing & Collaborations
-                                </h2>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                        <div className="text-primary font-black mb-1">Per Reel/Post</div>
-                                        <div className="text-3xl font-black">{influencer.pricePerReel || influencer.price || '$500'}</div>
-                                    </div>
-                                    <div className="p-6 rounded-3xl bg-white/5 border border-white/10">
-                                        <div className="text-primary font-black mb-1">Collaboration</div>
-                                        <div className="text-3xl font-black">{influencer.collaborationPrice || '$1,200'}</div>
-                                    </div>
-                                </div>
-                            </section>
-
-                            {/* Portfolio / Gallery */}
-                            <section>
-                                <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
-                                    <Image className="w-6 h-6 text-primary" />
-                                    Content Portfolio
-                                </h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    {influencer.gallery?.map((img, idx) => (
-                                        <motion.div
-                                            whileHover={{ scale: 1.02 }}
-                                            key={idx}
-                                            className={`rounded-3xl overflow-hidden bg-gray-100 aspect-[4/5] shadow-sm ${idx % 3 === 0 ? 'md:col-span-2 md:aspect-[16/9]' : ''}`}
-                                        >
-                                            <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover" />
-                                        </motion.div>
-                                    )) || [1, 2, 3, 4, 5].map(idx => (
-                                        <div key={idx} className="bg-gray-50 rounded-3xl aspect-[4/5] animate-pulse" />
-                                    ))}
-                                </div>
-                            </section>
-
-                            {/* Video Section */}
-                            {(influencer.videoUrl || influencer.youtubeVideos?.length > 0) && (
-                                <section>
-                                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
-                                        <Video className="w-6 h-6 text-primary" />
-                                        YouTube Videos
-                                    </h2>
-                                    <div className="grid grid-cols-1 gap-6">
-                                        {influencer.youtubeVideos?.map((video, idx) => (
-                                            <div key={idx} className="aspect-video rounded-[2rem] overflow-hidden bg-black shadow-xl">
-                                                <iframe
-                                                    className="w-full h-full"
-                                                    src={video.includes('ember') ? video : `https://www.youtube.com/embed/${video.split('v=')[1]?.split('&')[0] || video}`}
-                                                    title="YouTube video player"
-                                                    frameBorder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                    allowFullScreen
-                                                ></iframe>
-                                            </div>
-                                        )) || influencer.videoUrl && (
-                                            <div className="aspect-video rounded-[3rem] overflow-hidden bg-black shadow-2xl">
-                                                <iframe
-                                                    className="w-full h-full"
-                                                    src={influencer.videoUrl}
-                                                    title="YouTube video player"
-                                                    frameBorder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                    allowFullScreen
-                                                ></iframe>
-                                            </div>
-                                        )}
-                                    </div>
-                                </section>
-                            )}
-
-                            {/* Instagram Reels Section */}
-                            {influencer.instagramReels?.length > 0 && (
-                                <section>
-                                    <h2 className="text-2xl font-black mb-8 flex items-center gap-3">
-                                        <Instagram className="w-6 h-6 text-primary" />
-                                        Instagram Reels
-                                    </h2>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                                        {influencer.instagramReels.map((reel, idx) => (
-                                            <a key={idx} href={reel} target="_blank" rel="noopener noreferrer" className="aspect-[9/16] rounded-3xl bg-gray-100 flex items-center justify-center p-4 text-center group hover:bg-gray-200 transition-colors">
-                                                <div className="flex flex-col items-center">
-                                                    <Play className="w-12 h-12 text-primary mb-4 group-hover:scale-110 transition-transform" />
-                                                    <span className="font-black text-sm uppercase tracking-widest">Watch Reel</span>
-                                                </div>
-                                            </a>
-                                        ))}
-                                    </div>
-                                </section>
-                            )}
-                        </div>
-
-                        {/* Right Sidebar - Inquiry Form */}
-                        <div className="lg:col-span-5">
-                            <div className="sticky top-32 space-y-6">
-
-                                <div className="bg-white p-8 lg:p-10 rounded-[3rem] shadow-2xl shadow-primary/10 border border-primary/5">
-                                    <div className="mb-8">
-                                        <h3 className="text-3xl font-black text-gray-900 mb-2 italic">Book {influencer.name.split(' ')[0]}</h3>
-                                        <p className="text-gray-500 font-medium">Fill out the form below to initiate a collaboration.</p>
-                                    </div>
-
-                                    <form onSubmit={handleSubmit} className="space-y-4">
-                                        <div className="relative">
-                                            <User className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
-                                            <input
-                                                required
-                                                type="text"
-                                                name="fullName"
-                                                value={formData.fullName}
-                                                onChange={handleInputChange}
-                                                placeholder="Full Name"
-                                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div className="relative">
-                                            <Mail className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
-                                            <input
-                                                required
-                                                type="email"
-                                                name="email"
-                                                value={formData.email}
-                                                onChange={handleInputChange}
-                                                placeholder="Email Address"
-                                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div className="relative">
-                                            <Briefcase className="absolute left-4 top-4 w-5 h-5 text-gray-400" />
-                                            <input
-                                                required
-                                                type="text"
-                                                name="budget"
-                                                value={formData.budget}
-                                                onChange={handleInputChange}
-                                                placeholder="Campaign Budget (e.g. $1,000)"
-                                                className="w-full pl-12 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div className="relative">
-                                            <textarea
-                                                required
-                                                rows="4"
-                                                name="message"
-                                                value={formData.message}
-                                                onChange={handleInputChange}
-                                                placeholder="Briefly describe your campaign goal..."
-                                                className="w-full px-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-gray-400 resize-none"
-                                            ></textarea>
-                                        </div>
-
-                                        <button
-                                            disabled={formStatus === 'sending'}
-                                            type="submit"
-                                            className={`w-full py-5 rounded-2xl font-black text-white text-lg shadow-xl transition-all flex items-center justify-center gap-3 overflow-hidden relative
-                                                ${formStatus === 'success' ? 'bg-green-500 shadow-green-500/20' : 'bg-primary shadow-primary/20 hover:scale-[1.02]'}`}
-                                        >
-                                            <AnimatePresence mode="wait">
-                                                {formStatus === 'idle' && (
-                                                    <motion.div
-                                                        key="idle"
-                                                        initial={{ opacity: 0 }}
-                                                        animate={{ opacity: 1 }}
-                                                        exit={{ opacity: 0 }}
-                                                        className="flex items-center gap-2"
-                                                    >
-                                                        Send Inquiry <Send className="w-5 h-5" />
-                                                    </motion.div>
-                                                )}
-                                                {formStatus === 'sending' && (
-                                                    <motion.div
-                                                        key="sending"
-                                                        initial={{ opacity: 0 }}
-                                                        animate={{ opacity: 1 }}
-                                                        className="flex items-center gap-2"
-                                                    >
-                                                        Sending...
-                                                    </motion.div>
-                                                )}
-                                                {formStatus === 'success' && (
-                                                    <motion.div
-                                                        key="success"
-                                                        initial={{ opacity: 0, scale: 0.5 }}
-                                                        animate={{ opacity: 1, scale: 1 }}
-                                                        className="flex flex-col items-center text-center py-2"
-                                                    >
-                                                        <span className="font-black text-sm">Thank you! We will contact you soon.</span>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </button>
-
-                                        <p className="text-[10px] text-center text-gray-400 font-bold uppercase tracking-widest mt-4">
-                                            Secure Inquiry • No Commitment Required
-                                        </p>
-                                    </form>
-                                </div>
-
-                                {/* Extra Info Cards */}
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
-                                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Price Guide</h4>
-                                        <p className="text-xl font-black text-gray-900">{influencer.price || "Starts from $500"}</p>
-                                    </div>
-                                    <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
-                                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Response Time</h4>
-                                        <p className="text-xl font-black text-gray-900">{influencer.responseTime || "24 Hours"}</p>
+                            <div className="inline-block p-1 rounded-[2.5rem] bg-gradient-to-r from-orange-500 to-primary">
+                                <div className="bg-transparent px-10 py-5 rounded-[2.3rem] flex items-center gap-6 text-white min-w-[280px]">
+                                    <Instagram className="w-10 h-10" />
+                                    <div>
+                                        <div className="text-2xl font-black italic">{influencer.followers || '31.8k'}</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Instagram Feed</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {/* PRICING SECTION */}
+                        <div className="bg-[#0f172a] p-10 rounded-[3rem] text-white space-y-10 shadow-2xl relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-40 h-40 bg-primary/5 rounded-full -mr-20 -mt-20 blur-3xl" />
+                            <div className="flex items-center gap-4 relative">
+                                <Trophy className="w-6 h-6 text-primary" />
+                                <h2 className="text-2xl font-black tracking-tight">Pricing & Collaborations</h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 relative">
+                                <div className="p-8 bg-white/5 rounded-3xl border border-white/10 space-y-4">
+                                    <h4 className="text-primary font-black text-xs uppercase tracking-widest">Per Reel/Post</h4>
+                                    <div className="text-4xl font-black italic">{influencer.pricePerReel || influencer.price || '10k'}</div>
+                                </div>
+                                <div className="p-8 bg-white/5 rounded-3xl border border-white/10 space-y-4">
+                                    <h4 className="text-primary font-black text-xs uppercase tracking-widest">Collaboration</h4>
+                                    <div className="text-4xl font-black italic">{influencer.collaborationPrice || influencer.price || '10k'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* PORTFOLIO GRID */}
+                        <div className="space-y-8">
+                            <div className="flex items-center gap-4">
+                                <Image className="w-6 h-6 text-primary" />
+                                <h2 className="text-2xl font-black tracking-tight">Content Portfolio</h2>
+                            </div>
+                            <div className="grid grid-cols-2 gap-6">
+                                {influencer.gallery?.slice(0, 4).map((img, i) => (
+                                    <div key={i} className="aspect-square rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg">
+                                        <img src={getImageUrl(img)} alt="" className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* YOUTUBE SECTION */}
+                        {influencer.youtubeVideos && influencer.youtubeVideos.length > 0 && (
+                            <div className="space-y-8">
+                                <div className="flex items-center gap-4">
+                                    <Youtube className="w-6 h-6 text-primary" />
+                                    <h2 className="text-2xl font-black tracking-tight">Featured Content</h2>
+                                </div>
+                                <div className="aspect-video rounded-[3rem] overflow-hidden border-8 border-white shadow-2xl bg-black">
+                                    <iframe
+                                        className="w-full h-full"
+                                        src={`https://www.youtube.com/embed/${influencer.youtubeVideos[0].split('v=')[1]?.split('&')[0] || influencer.youtubeVideos[0].split('/').pop()}`}
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* RIGHT COLUMN: BOOKING FORM & TRUST STATS */}
+                    <div className="lg:col-span-5">
+                        {/* INQUIRY FORM SECTION */}
+                        <div id="inquiry-form" className="bg-white p-10 lg:p-16 rounded-[4rem] border border-gray-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.05)] lg:sticky lg:top-32 h-fit">
+                            <div className="mb-12">
+                                <h3 className="text-4xl lg:text-5xl font-black text-[#1e293b] mb-4 italic tracking-tight">
+                                    Book {influencer.name.split(' ')[0]}
+                                </h3>
+                                <p className="text-[#64748b] font-medium text-lg leading-relaxed">
+                                    Fill out the form below to initiate a collaboration.
+                                </p>
+                            </div>
+
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                <div className="relative group">
+                                    <div className="absolute left-7 top-1/2 -translate-y-1/2 text-[#94a3b8] group-focus-within:text-primary transition-colors">
+                                        <User className="w-6 h-6" />
+                                    </div>
+                                    <input
+                                        required
+                                        type="text"
+                                        name="fullName"
+                                        value={formData.fullName}
+                                        onChange={handleInputChange}
+                                        placeholder="Full Name"
+                                        className="w-full pl-16 pr-8 py-6 bg-[#f8fafc] border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-gray-100 outline-none transition-all font-bold text-[#1e293b] placeholder:text-[#94a3b8] text-lg"
+                                    />
+                                </div>
+                                <div className="relative group">
+                                    <div className="absolute left-7 top-1/2 -translate-y-1/2 text-[#94a3b8] group-focus-within:text-primary transition-colors">
+                                        <Mail className="w-6 h-6" />
+                                    </div>
+                                    <input
+                                        required
+                                        type="email"
+                                        name="email"
+                                        value={formData.email}
+                                        onChange={handleInputChange}
+                                        placeholder="Email Address"
+                                        className="w-full pl-16 pr-8 py-6 bg-[#f8fafc] border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-gray-100 outline-none transition-all font-bold text-[#1e293b] placeholder:text-[#94a3b8] text-lg"
+                                    />
+                                </div>
+                                <div className="relative group">
+                                    <div className="absolute left-7 top-1/2 -translate-y-1/2 text-[#94a3b8] group-focus-within:text-primary transition-colors">
+                                        <Briefcase className="w-6 h-6" />
+                                    </div>
+                                    <input
+                                        required
+                                        type="text"
+                                        name="budget"
+                                        value={formData.budget}
+                                        onChange={handleInputChange}
+                                        placeholder="Campaign Budget (e.g. $1,000)"
+                                        className="w-full pl-16 pr-8 py-6 bg-[#f8fafc] border-2 border-transparent rounded-[1.5rem] focus:bg-white focus:border-gray-100 outline-none transition-all font-bold text-[#1e293b] placeholder:text-[#94a3b8] text-lg"
+                                    />
+                                </div>
+                                <div className="relative group">
+                                    <textarea
+                                        required
+                                        rows="5"
+                                        name="message"
+                                        value={formData.message}
+                                        onChange={handleInputChange}
+                                        placeholder="Briefly describe your campaign goal..."
+                                        className="w-full px-8 py-6 bg-[#f8fafc] border-2 border-transparent rounded-[2rem] focus:bg-white focus:border-gray-100 outline-none transition-all font-bold text-[#1e293b] placeholder:text-[#94a3b8] text-lg resize-none"
+                                    />
+                                </div>
+
+                                <button
+                                    disabled={formStatus === 'sending'}
+                                    type="submit"
+                                    className={`w-full py-7 rounded-[2.5rem] font-black text-white text-2xl transition-all flex items-center justify-center gap-4 active:scale-[0.98] shadow-2xl tracking-tight
+                                        ${formStatus === 'success' ? 'bg-green-500 shadow-green-200' : 'bg-primary hover:bg-primary/90 shadow-primary/20 hover:shadow-primary/40'}`}
+                                >
+                                    {formStatus === 'idle' && (
+                                        <>Send Inquiry <Send className="w-7 h-7 rotate-[-15deg]" /></>
+                                    )}
+                                    {formStatus === 'sending' && "Processing..."}
+                                    {formStatus === 'success' && "Inquiry Sent!"}
+                                </button>
+
+                                <div className="text-center pt-8">
+                                    <p className="text-[11px] font-black text-[#94a3b8] uppercase tracking-[0.2em]">
+                                        SECURE INQUIRY • NO COMMITMENT REQUIRED
+                                    </p>
+                                </div>
+                            </form>
+
+                            {/* Trust Stats Cards integrated */}
+                            <div className="grid grid-cols-2 gap-4 mt-12 pt-12 border-t border-gray-100">
+                                <div className="bg-[#f8fafc] p-6 rounded-3xl border border-gray-50 space-y-1">
+                                    <p className="text-[10px] text-[#94a3b8] font-black uppercase tracking-widest">Price Guide</p>
+                                    <div className="text-xl font-black text-[#1e293b]">Starts {influencer.price || '$500'}</div>
+                                </div>
+                                <div className="bg-[#f8fafc] p-6 rounded-3xl border border-gray-50 space-y-1">
+                                    <p className="text-[10px] text-[#94a3b8] font-black uppercase tracking-widest">Response</p>
+                                    <div className="text-xl font-black text-[#1e293b]">{influencer.responseTime || '24 Hours'}</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
+
             <Footer />
         </div>
     );

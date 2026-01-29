@@ -4,8 +4,8 @@ import { Plus, Minus, HelpCircle } from 'lucide-react';
 
 const faqs = [
     {
-        question: "How does Doringus work?",
-        answer: "Doringus connects brands with authentic creators. Brands can browse creators by category, view their portfolios and stats, and send inquiries directly. Creators can create profiles to showcase their work and manage collaborations."
+        question: "How does DO RING US work?",
+        answer: "DO RING US connects brands with authentic creators. Brands can browse creators by category, view their portfolios and stats, and send inquiries directly. Creators can create profiles to showcase their work and manage collaborations."
     },
     {
         question: "How do I join as a creator?",
@@ -13,11 +13,11 @@ const faqs = [
     },
     {
         question: "Is there a fee to use the platform?",
-        answer: "Joining Doringus as a creator is currently free. Brands can browse and send inquiries for free as well. We may offer premium features and campaign management services in the future."
+        answer: "Joining DO RING US as a creator is currently free. Brands can browse and send inquiries for free as well. We may offer premium features and campaign management services in the future."
     },
     {
         question: "How are payments handled?",
-        answer: "Currently, Doringus facilitates the connection between brands and creators. Payment terms are negotiated directly between the brand and the creator through our inquiry system."
+        answer: "Currently, DO RING US facilitates the connection between brands and creators. Payment terms are negotiated directly between the brand and the creator through our inquiry system."
     },
     {
         question: "What types of creators are on the platform?",
@@ -95,7 +95,7 @@ const FAQ = () => {
                                 </span>
                             </h2>
                             <p className="text-gray-500 font-medium text-lg mb-10 leading-relaxed">
-                                Everything you need to know about Doringus. Can't find the answer you're looking for?
+                                Everything you need to know about DO RING US. Can't find the answer you're looking for?
                             </p>
                             <a
                                 href="mailto:support@doringus.com"

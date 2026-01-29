@@ -20,6 +20,7 @@ import Register from './pages/Register';
 import InfluencerRegister from './pages/InfluencerRegister';
 import InfluencerDashboard from './pages/InfluencerDashboard';
 import InfluencerLogin from './pages/InfluencerLogin';
+import NotFound from './pages/NotFound';
 
 import ScrollToTop from './components/ScrollToTop';
 
@@ -32,15 +33,15 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
 
-        {/* Influencer List - support both singular and plural */}
-        <Route path="/influencer" element={<InfluencerList />} />
+        {/* Influencer Marketplace Flow */}
         <Route path="/influencers" element={<InfluencerList />} />
+        <Route path="/influencers/:category" element={<InfluencerList />} />
+        <Route path="/influencers/:category/:location" element={<InfluencerList />} />
 
-        {/* Influencer Detail - support both with and without category */}
-        <Route path="/influencer/:category/:influencerName" element={<InfluencerDetail />} />
+        {/* Individual Influencer Profile */}
         <Route path="/influencer/:influencerName" element={<InfluencerDetail />} />
+        {/* Support old URLs if any for SEO continuity */}
         <Route path="/influencers/:category/:influencerName" element={<InfluencerDetail />} />
-        <Route path="/influencers/:influencerName" element={<InfluencerDetail />} />
 
         {/* Auth Routes */}
         <Route path="/login" element={<InfluencerLogin />} />
@@ -64,6 +65,10 @@ function App() {
             {/* Add more admin routes here */}
           </Route>
         </Route>
+
+        {/* 404 Catch-All Route */}
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AdminProvider>
   );

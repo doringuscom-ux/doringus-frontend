@@ -37,10 +37,7 @@ const brands = [
 
 const BrandsMarquee = () => {
     return (
-        <section className="py-16 bg-white relative overflow-hidden">
-            {/* Subtle Gradient Background */}
-            <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 pointer-events-none" />
-
+        <section className="py-16 bg-[goldenrod] relative overflow-hidden">
             {/* Abstract Background Decoration */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[300px] bg-gradient-to-r from-blue-50/30 via-purple-50/30 to-pink-50/30 blur-[80px] -z-10 rounded-full" />
 
@@ -69,9 +66,9 @@ const BrandsMarquee = () => {
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="relative w-full overflow-hidden"
                 >
-                    {/* Premium Gradient Masks */}
-                    <div className="absolute top-0 left-0 w-32 md:w-64 h-full bg-gradient-to-r from-white via-white/80 to-transparent z-10 pointer-events-none" />
-                    <div className="absolute top-0 right-0 w-32 md:w-64 h-full bg-gradient-to-l from-white via-white/80 to-transparent z-10 pointer-events-none" />
+                    {/* Premium Gradient Masks - Adjusted for Goldenrod Background */}
+                    <div className="absolute top-0 left-0 w-32 md:w-64 h-full bg-gradient-to-r from-[goldenrod] via-[goldenrod]/80 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-32 md:w-64 h-full bg-gradient-to-l from-[goldenrod] via-[goldenrod]/80 to-transparent z-10 pointer-events-none" />
 
                     <div className="flex select-none">
                         <motion.div
@@ -94,7 +91,7 @@ const BrandsMarquee = () => {
                                         <img
                                             src={brand.logo}
                                             alt={brand.name}
-                                            className="h-full w-auto object-contain"
+                                            className="h-full w-auto object-contain mix-blend-multiply"
                                         />
                                     </div>
                                 </div>

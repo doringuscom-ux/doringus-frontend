@@ -30,7 +30,7 @@ const CreatorCategories = () => {
 
     if (categories.length === 0) return null;
 
-    const activeCategories = categories.filter(c => c.status === 'Active');
+    const activeCategories = categories.filter(c => c.status?.toLowerCase() === 'active');
     const filteredInfluencers = influencers.filter(inf => {
         const matchesCategory = inf.category?.toLowerCase() === activeTab?.toLowerCase();
         // Support Approved status, lowercase approved, or missing status (for legacy)
@@ -99,7 +99,7 @@ const CreatorCategories = () => {
                                 filteredInfluencers.map((inf) => (
                                     <Link
                                         key={inf.id}
-                                        to={`/influencer/${inf.category}/${inf.username}`}
+                                        to={`/influencer/${inf.username}`}
                                         className="group"
                                     >
                                         <div className="bg-white rounded-[2.5rem] p-6 shadow-xl shadow-gray-100 border border-gray-50 hover:border-primary/20 transition-all duration-500 hover:-translate-y-2">

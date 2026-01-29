@@ -17,7 +17,7 @@ const Hero = () => {
                             className="flex items-center gap-2 mb-6"
                         >
                             <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold tracking-wide">
-                                Doringus
+                                DO RING US
                             </span>
                             <span className="text-gray-400 text-sm font-medium flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
@@ -26,12 +26,12 @@ const Hero = () => {
                         </motion.div>
 
                         <h1 className="font-display text-5xl lg:text-7xl font-bold leading-[1.1] text-text-main mb-6 tracking-tight">
-                            Connect with <br className="hidden lg:block" />
-                            <span className="text-primary">India's Top Creators</span>
+                            Supercharge your <br className="hidden lg:block" />
+                            <span className="text-primary">Business & Brand.</span>
                         </h1>
 
-                        <p className="text-lg lg:text-xl text-text-secondary mb-8 leading-relaxed max-w-xl">
-                            Doringus is a modern influencer ecosystem where brands and creators collaborate through authentic content and measurable campaigns.
+                        <p className="text-lg lg:text-xl text-text-secondary mb-8 leading-relaxed max-w-xl font-bold uppercase tracking-tight">
+                            with the <span className="text-primary">UGC Content Creators, Influencers & Celebrities.</span>
                         </p>
 
                         <div className="flex flex-wrap items-center gap-4 mb-12">

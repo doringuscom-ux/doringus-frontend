@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
@@ -8,55 +8,108 @@ import CategoryGrid from '../components/sections/CategoryGrid';
 import { getImageUrl } from '../utils/axiosConfig';
 import { Sparkles } from 'lucide-react';
 
-const InfluencerList = () => {
-    const { categories, influencers, loading } = useAdmin();
-    const [searchParams] = useSearchParams();
-    const [searchQuery, setSearchQuery] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || '');
+// Helper function to create URL-friendly slug from category label
+const createSlug = (label) => {
+    return label?.toLowerCase().replace(/\s+/g, '-') || '';
+};
 
-    useEffect(() => {
-        const cat = searchParams.get('category');
-        if (cat) setSelectedCategory(cat);
-    }, [searchParams]);
+const InfluencerList = () => {
+    const { category: categorySlug, location: cityParam } = useParams();
+    const { categories, influencers, loading } = useAdmin();
+    const navigate = useNavigate();
+    const [searchQuery, setSearchQuery] = useState('');
 
     const activeCategories = useMemo(() => {
         return categories.filter(c => c.status === 'Active');
     }, [categories]);
 
+    // Find the category object by matching the slug from URL
+    const selectedCategoryObj = useMemo(() => {
+        if (!categorySlug) return null;
+        return activeCategories.find(cat => createSlug(cat.label) === categorySlug);
+    }, [categorySlug, activeCategories]);
+
+    const selectedCategory = selectedCategoryObj?.id || '';
+
     const filteredInfluencers = useMemo(() => {
         return (influencers || []).filter(inf => {
             const matchesSearch = (inf.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (inf.username || '').toLowerCase().includes(searchQuery.toLowerCase());
+
             const matchesCategory = selectedCategory
                 ? inf.category?.toLowerCase() === selectedCategory.toLowerCase()
                 : true;
 
-            // Support Approved status, lowercase approved, or missing status (for legacy/admin display)
+            const matchesLocation = cityParam
+                ? (inf.location || '').toLowerCase() === cityParam.toLowerCase()
+                : true;
+
             const isApproved = !inf.status ||
                 inf.status.toLowerCase() === 'approved' ||
                 inf.status === 'Approved';
-            return matchesSearch && matchesCategory && isApproved;
-        });
-    }, [influencers, searchQuery, selectedCategory]);
 
-    // We want the Navbar and Hero to be visible even if loading
-    const isDataEmpty = !loading && influencers.length === 0;
+            return matchesSearch && matchesCategory && matchesLocation && isApproved;
+        });
+    }, [influencers, searchQuery, selectedCategory, cityParam]);
+
+    const handleCategoryChange = (catId) => {
+        const cat = activeCategories.find(c => c.id === catId);
+        if (cat) {
+            const slug = createSlug(cat.label);
+            navigate(`/influencers/${slug}`);
+        } else {
+            navigate('/influencers');
+        }
+    };
 
     return (
         <div className="bg-black min-h-screen flex flex-col">
             <Navbar darkMode={true} />
 
             <main className="flex-1">
-                {/* New Hero Section */}
+                {/* Hero Section */}
                 <InfluencerHero
                     categories={activeCategories}
                     onSearch={setSearchQuery}
-                    onCategoryChange={setSelectedCategory}
+                    onCategoryChange={handleCategoryChange}
                     selectedCategory={selectedCategory}
                 />
 
                 {/* Category Grid Section */}
                 <CategoryGrid categories={activeCategories} />
+
+                {/* Location Filter - Only show when category is selected */}
+                {selectedCategory && (
+                    <div className="container mx-auto px-4 lg:px-8 py-12 border-t border-gray-900">
+                        <div className="mb-8 text-center">
+                            <h3 className="text-2xl font-black text-white mb-2 italic uppercase tracking-tighter">Filter by Location</h3>
+                            <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Select a city to find creators in your area</p>
+                        </div>
+                        <div className="flex flex-wrap gap-3 justify-center">
+                            <button
+                                onClick={() => navigate(`/influencers/${categorySlug}`)}
+                                className={`px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider transition-all ${!cityParam
+                                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                    : 'bg-gray-900 text-gray-400 border border-gray-800 hover:border-gray-700'
+                                    }`}
+                            >
+                                All Locations
+                            </button>
+                            {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(city => (
+                                <button
+                                    key={city}
+                                    onClick={() => navigate(`/influencers/${categorySlug}/${city.toLowerCase()}`)}
+                                    className={`px-6 py-3 rounded-xl font-black text-sm uppercase tracking-wider transition-all ${cityParam === city.toLowerCase()
+                                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                        : 'bg-gray-900 text-gray-400 border border-gray-800 hover:border-gray-700'
+                                        }`}
+                                >
+                                    {city}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 {/* Influencer Results Section */}
                 <div className="container mx-auto px-4 lg:px-8 py-20 border-t border-gray-900">
@@ -82,7 +135,7 @@ const InfluencerList = () => {
                                     {filteredInfluencers.map((inf) => {
                                         const categoryLabel = activeCategories.find(c => c.id === inf.category)?.label || 'Creator';
                                         return (
-                                            <Link key={inf.id} to={`/influencer/${inf.category}/${inf.username}`} className="group">
+                                            <Link key={inf.id} to={`/influencer/${inf.username}`} className="group">
                                                 <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-5 bg-gray-900 border border-gray-800 shadow-xl">
                                                     <img
                                                         src={getImageUrl(inf.profileImage)}
@@ -103,7 +156,7 @@ const InfluencerList = () => {
                                     <Sparkles className="w-12 h-12 text-gray-700 mx-auto mb-4" />
                                     <h3 className="text-xl font-bold text-gray-400">No creators matching your criteria</h3>
                                     <button
-                                        onClick={() => { setSearchQuery(''); setSelectedCategory(''); }}
+                                        onClick={() => { setSearchQuery(''); navigate('/influencers'); }}
                                         className="mt-4 text-primary font-bold hover:underline"
                                     >
                                         Clear all filters

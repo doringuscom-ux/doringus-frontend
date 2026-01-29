@@ -40,7 +40,7 @@ const Register = () => {
                     className="max-w-md w-full"
                 >
                     <div className="text-center mb-10">
-                        <h1 className="text-4xl font-black text-text-main mb-3 italic">Join Doringus<span className="text-primary">.</span></h1>
+                        <h1 className="text-4xl font-black text-text-main mb-3 italic">Join DO RING US<span className="text-primary">.</span></h1>
                         <p className="text-gray-500 font-bold text-xs uppercase tracking-[0.2em]">Monetize your influence</p>
                     </div>
 

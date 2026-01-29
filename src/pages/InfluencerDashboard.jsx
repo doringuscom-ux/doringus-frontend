@@ -192,6 +192,53 @@ const InfluencerDashboard = () => {
                                             </div>
                                         </div>
 
+                                        {/* Location Selector */}
+                                        <div className="bg-white p-12 rounded-[3.5rem] shadow-xl shadow-gray-100/50 border border-gray-100">
+                                            <div className="flex items-center justify-between mb-8">
+                                                <div>
+                                                    <h3 className="text-2xl font-black text-gray-900 mb-2 italic tracking-tight flex items-center gap-3">
+                                                        <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                        </svg>
+                                                        Base Location
+                                                    </h3>
+                                                    <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">
+                                                        Select your primary city for better discovery
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="max-w-md">
+                                                <select
+                                                    value={user.location || ''}
+                                                    onChange={async (e) => {
+                                                        setIsUpdating(true);
+                                                        const res = await updateInfluencerProfile(user.id, { location: e.target.value });
+                                                        if (res.success) {
+                                                            alert('Location updated successfully!');
+                                                        } else {
+                                                            alert('Update failed: ' + res.message);
+                                                        }
+                                                        setIsUpdating(false);
+                                                    }}
+                                                    disabled={isUpdating}
+                                                    className="w-full px-6 py-5 bg-gray-50 border-2 border-gray-100 rounded-2xl font-black text-lg uppercase tracking-wider focus:ring-4 focus:ring-primary/10 focus:border-primary transition-all appearance-none cursor-pointer disabled:opacity-50"
+                                                >
+                                                    <option value="">Select Your City</option>
+                                                    {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(city => (
+                                                        <option key={city} value={city.toLowerCase()}>{city}</option>
+                                                    ))}
+                                                </select>
+                                                {user.location && (
+                                                    <div className="mt-4 flex items-center gap-2 text-green-600 font-bold text-sm">
+                                                        <CheckCircle className="w-4 h-4" />
+                                                        <span>Currently set to: {user.location.charAt(0).toUpperCase() + user.location.slice(1)}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
                                         {/* Platforms */}
                                         <div className="bg-white p-12 rounded-[3.5rem] shadow-xl shadow-gray-100/50 border border-gray-100">
                                             <h3 className="text-2xl font-black text-gray-900 mb-10 italic tracking-tight">Connected Platforms</h3>

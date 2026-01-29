@@ -47,7 +47,7 @@ const Footer = () => {
                             viewport={{ once: true }}
                         >
                             <a href="/" className="inline-block mb-8">
-                                <span className="text-3xl font-black tracking-tighter italic uppercase text-white">DORINGUS</span>
+                                <span className="text-3xl font-black tracking-tighter italic uppercase text-white">DO RING US</span>
                             </a>
                             <p className="text-gray-400 text-lg leading-relaxed max-w-md">
                                 The leading marketplace for the modern creator economy. We bridge the gap between visionary brands and authentic voices to create impactful digital experiences.
@@ -106,7 +106,7 @@ const Footer = () => {
                 {/* Bottom Bar */}
                 <div className="border-t border-white/10 pt-12 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500 gap-6">
                     <p className="font-medium flex items-center gap-2">
-                        &copy; 2026 Doringus Inc. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> in India.
+                        &copy; 2026 DO RING US Inc. Made with <Heart className="w-4 h-4 text-red-500 fill-red-500 animate-pulse" /> in India.
                     </p>
                     <div className="flex gap-8">
                         <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>

@@ -25,7 +25,8 @@ const InfluencerRegister = () => {
         pricePerReel: '',
         youtubePromotionPrice: '',
         collaborationPrice: '',
-        category: 'fashion' // Fixed default to match existing categories
+        category: 'fashion', // Fixed default to match existing categories
+        location: ''
     });
 
     const navigate = useNavigate();
@@ -108,7 +109,7 @@ const InfluencerRegister = () => {
                                 Join The Community
                             </span>
                             <h1 className="text-6xl font-black text-gray-900 mb-6 tracking-tighter">Become a Creator<span className="text-primary">.</span></h1>
-                            <p className="text-gray-500 font-bold text-lg uppercase tracking-widest max-w-lg mx-auto">Join Doringus & Monetize your influence with thousands of brands worldwide.</p>
+                            <p className="text-gray-500 font-bold text-lg uppercase tracking-widest max-w-lg mx-auto">Join DO RING US & Monetize your influence with thousands of brands worldwide.</p>
                         </motion.div>
                     </div>
 
@@ -197,11 +198,29 @@ const InfluencerRegister = () => {
                                                     </div>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Password</label>
+                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Base Location (City)</label>
                                                     <div className="relative group">
-                                                        <Lock className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors" />
-                                                        <input required type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full pl-12 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold" placeholder="••••••••" />
+                                                        <select
+                                                            required
+                                                            name="location"
+                                                            value={formData.location}
+                                                            onChange={handleInputChange}
+                                                            className="w-full pl-6 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold appearance-none cursor-pointer uppercase"
+                                                        >
+                                                            <option value="" disabled>Select City</option>
+                                                            {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(loc => (
+                                                                <option key={loc} value={loc.toLowerCase()}>{loc}</option>
+                                                            ))}
+                                                        </select>
+                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none">▼</div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Access Password</label>
+                                                <div className="relative group">
+                                                    <Lock className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors" />
+                                                    <input required type="password" name="password" value={formData.password} onChange={handleInputChange} className="w-full pl-12 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold" placeholder="••••••••" />
                                                 </div>
                                             </div>
 

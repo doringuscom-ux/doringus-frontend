@@ -14,8 +14,8 @@ const InfluencerHero = ({ categories, onSearch, onCategoryChange, selectedCatego
             </div>
 
             <div className="container mx-auto px-4 lg:px-8 relative z-20 text-center">
-                <h1 className="text-4xl lg:text-5xl xl:text-7xl font-black text-white mb-10 max-w-5xl mx-auto leading-[1.1] tracking-tighter">
-                    Book World-Class <span className="text-primary">Artists & Celebrities</span>
+                <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black text-white mb-10 max-w-5xl mx-auto leading-[1.1] tracking-tighter">
+                    Supercharge your business with the <span className="text-primary">UGC Content Creators, Influencers & Celebrities</span>
                 </h1>
 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-0 max-w-3xl mx-auto">

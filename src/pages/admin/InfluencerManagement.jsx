@@ -28,6 +28,7 @@ const InfluencerManagement = () => {
         collaborationPrice: '',
         instagramReels: [],
         youtubeVideos: [],
+        location: '',
     });
 
     const resetForm = () => {
@@ -47,6 +48,7 @@ const InfluencerManagement = () => {
             collaborationPrice: '',
             instagramReels: [],
             youtubeVideos: [],
+            location: '',
         });
         setEditingId(null);
     };
@@ -198,12 +200,23 @@ const InfluencerManagement = () => {
                                                     <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Unique Access ID (@)</label>
                                                     <input required value={formData.username || ''} onChange={e => setFormData({ ...formData, username: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="sarah_parker" />
                                                 </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Genre Type</label>
-                                                    <select required value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-black border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all appearance-none">
-                                                        <option value="">Select Domain</option>
-                                                        {categories.map(cat => <option key={cat?.id} value={cat?.id}>{cat?.label}</option>)}
-                                                    </select>
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Genre Type</label>
+                                                        <select required value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-black border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all appearance-none">
+                                                            <option value="">Select Domain</option>
+                                                            {categories.map(cat => <option key={cat?.id} value={cat?.id}>{cat?.label}</option>)}
+                                                        </select>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Main Location</label>
+                                                        <select required value={formData.location || ''} onChange={e => setFormData({ ...formData, location: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-black border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all appearance-none uppercase">
+                                                            <option value="">Select City</option>
+                                                            {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(loc => (
+                                                                <option key={loc} value={loc.toLowerCase()}>{loc}</option>
+                                                            ))}
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 {!editingId && (
                                                     <div className="space-y-2">
