@@ -79,14 +79,26 @@ export const AdminProvider = ({ children }) => {
             }
 
             const requests = [
-                api.get('/categories').catch(e => ({ data: [] })),
-                api.get('/influencers').catch(e => ({ data: [] })),
+                api.get('/categories').catch(e => {
+                    console.error("[Context] Categories API Error:", e);
+                    return { data: [] };
+                }),
+                api.get('/influencers').catch(e => {
+                    console.error("[Context] Influencers API Error:", e);
+                    return { data: [] };
+                }),
                 api.get('/inquiries').catch(e => ({ data: [] }))
             ];
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
-                requests.push(api.get('/users').catch(() => ({ data: [] })));
-                requests.push(api.get('/campaigns').catch(() => ({ data: [] })));
+                requests.push(api.get('/users').catch((e) => {
+                    console.error("[Context] Users API Error:", e);
+                    return { data: [] };
+                }));
+                requests.push(api.get('/campaigns').catch((e) => {
+                    console.error("[Context] Campaigns API Error:", e);
+                    return { data: [] };
+                }));
             }
 
             const results = await Promise.allSettled(requests);
@@ -113,6 +125,14 @@ export const AdminProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error fetching data:', error);
+            if (error.response) {
+                console.error('Response Status:', error.response.status);
+                console.error('Response Data:', error.response.data);
+            } else if (error.request) {
+                console.error('No response received. Possible CORS or Network Error.');
+            } else {
+                console.error('Error Message:', error.message);
+            }
         } finally {
             setLoading(false);
         }
