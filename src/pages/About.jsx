@@ -26,7 +26,10 @@ const About = () => {
                                 </span>
                                 <h1 className="text-6xl lg:text-8xl font-black mb-8 tracking-tighter leading-none italic uppercase">
                                     About <br />
-                                    <span className="text-primary italic">DO RING US</span>
+                                    <span className="text-primary italic flex items-center gap-3">
+                                        <Zap className="w-12 h-12 lg:w-16 lg:h-16 fill-primary" />
+                                        DO RING US
+                                    </span>
                                 </h1>
                                 <p className="text-xl text-gray-400 font-bold leading-relaxed mb-8 tracking-wide">
                                     A movement towards fair opportunities, creative freedom, and sustainable digital growth.

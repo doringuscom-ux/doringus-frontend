@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowUpRight, Heart } from 'lucide-react';
+import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowUpRight, Heart, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const FooterLink = ({ href, children }) => (
@@ -46,7 +46,8 @@ const Footer = () => {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                         >
-                            <a href="/" className="inline-block mb-8">
+                            <a href="/" className="flex items-center gap-2 mb-8 group">
+                                <Zap className="w-10 h-10 fill-primary text-primary transition-transform group-hover:scale-110 group-hover:rotate-12" />
                                 <span className="text-3xl font-black tracking-tighter italic uppercase text-white">DO RING US</span>
                             </a>
                             <p className="text-gray-400 text-lg leading-relaxed max-w-md">

@@ -52,8 +52,9 @@ const Navbar = ({ darkMode = false }) => {
                         : 'bg-transparent border-transparent')
                     }`}>
                     {/* Logo */}
-                    <Link to="/" className={`text-2xl font-black tracking-tighter italic uppercase transition-colors ${logoColor}`}>
-                        DO RING US
+                    <Link to="/" className={`flex items-center gap-1.5 text-2xl font-black tracking-tighter italic uppercase transition-colors ${logoColor}`}>
+                        <Zap className="w-8 h-8 fill-primary text-primary" />
+                        <span>DO RING US</span>
                     </Link>
 
                     {/* Desktop Menu */}

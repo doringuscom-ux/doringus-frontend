@@ -40,8 +40,11 @@ const Sidebar = () => {
     return (
         <aside className="fixed left-0 top-0 h-screen w-80 bg-white/90 backdrop-blur-2xl border-r border-gray-100 hidden md:flex flex-col z-50 p-8">
             <div className="mb-16">
-                <div className="flex flex-col gap-2 cursor-pointer" onClick={() => navigate('/admin')}>
-                    <span className="text-3xl font-black tracking-tighter italic uppercase text-gray-900">DO RING US</span>
+                <div className="flex flex-col gap-2 cursor-pointer group" onClick={() => navigate('/admin')}>
+                    <div className="flex items-center gap-2">
+                        <Zap className="w-8 h-8 fill-primary text-primary transition-transform group-hover:scale-110" />
+                        <span className="text-3xl font-black tracking-tighter italic uppercase text-gray-900">DO RING US</span>
+                    </div>
                     <div>
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mt-1">Admin OS</p>
                     </div>

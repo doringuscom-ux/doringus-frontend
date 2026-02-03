@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, Play, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Play, CheckCircle2, Zap } from 'lucide-react';
 import VideoGrid from '../ui/VideoGrid';
 
 const Hero = () => {
@@ -16,7 +16,8 @@ const Hero = () => {
                             transition={{ duration: 0.5 }}
                             className="flex items-center gap-2 mb-6"
                         >
-                            <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-semibold tracking-wide">
+                            <span className="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide flex items-center gap-2">
+                                <Zap className="w-4 h-4 fill-blue-600" />
                                 DO RING US
                             </span>
                             <span className="text-gray-400 text-sm font-medium flex items-center gap-1">

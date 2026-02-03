@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Phone, Instagram, Youtube, DollarSign, Users, ArrowRight, CheckCircle } from 'lucide-react';
+import { User, Mail, Lock, Phone, Instagram, Youtube, DollarSign, Users, ArrowRight, CheckCircle, MapPin } from 'lucide-react';
+破
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
 import Navbar from '../components/layout/Navbar';
@@ -198,21 +199,17 @@ const InfluencerRegister = () => {
                                                     </div>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Base Location (City)</label>
+                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Base Location (City/State)</label>
                                                     <div className="relative group">
-                                                        <select
+                                                        <MapPin className="absolute left-4 top-4 w-5 h-5 text-gray-400 group-focus-within:text-primary transition-colors z-10" />
+                                                        <input
                                                             required
                                                             name="location"
                                                             value={formData.location}
                                                             onChange={handleInputChange}
-                                                            className="w-full pl-6 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold appearance-none cursor-pointer uppercase"
-                                                        >
-                                                            <option value="" disabled>Select City</option>
-                                                            {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(loc => (
-                                                                <option key={loc} value={loc.toLowerCase()}>{loc}</option>
-                                                            ))}
-                                                        </select>
-                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none">▼</div>
+                                                            className="w-full pl-12 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold"
+                                                            placeholder="Mumbai, Maharashtra"
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
