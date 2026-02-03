@@ -233,6 +233,10 @@ const InfluencerManagement = () => {
                                         <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Market Valuation</h4>
                                         <div className="grid grid-cols-2 gap-6">
                                             <div className="space-y-2">
+                                                <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Total Reach (Followers)</label>
+                                                <input value={formData.followers || ''} onChange={e => setFormData({ ...formData, followers: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="850K" />
+                                            </div>
+                                            <div className="space-y-2">
                                                 <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Price/Reel</label>
                                                 <input value={formData.pricePerReel || ''} onChange={e => setFormData({ ...formData, pricePerReel: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="$500" />
                                             </div>
@@ -314,7 +318,7 @@ const InfluencerManagement = () => {
                                     <div className="space-y-1">
                                         <div className="flex items-center gap-2 text-pink-500">
                                             <Instagram className="w-4 h-4" />
-                                            <span className="text-base font-black italic">{inf?.instagramFollowers || '0'}</span>
+                                            <span className="text-base font-black italic">{inf?.followers || inf?.instagramFollowers || '0'}</span>
                                         </div>
                                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Reach</p>
                                     </div>

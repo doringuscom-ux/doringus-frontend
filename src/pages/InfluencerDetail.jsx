@@ -214,7 +214,7 @@ const InfluencerDetail = () => {
                                 <div className="bg-transparent px-10 py-5 rounded-[2.3rem] flex items-center gap-6 text-white min-w-[280px]">
                                     <Instagram className="w-10 h-10" />
                                     <div>
-                                        <div className="text-2xl font-black italic">{influencer.followers || '31.8k'}</div>
+                                        <div className="text-2xl font-black italic">{influencer.followers || influencer.instagramFollowers || '0'}</div>
                                         <div className="text-[10px] font-black uppercase tracking-widest opacity-80">Instagram Feed</div>
                                     </div>
                                 </div>

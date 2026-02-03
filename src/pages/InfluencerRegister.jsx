@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Phone, Instagram, Youtube, DollarSign, Users, ArrowRight, CheckCircle, MapPin } from 'lucide-react';
-破
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdmin } from '../context/AdminContext';
 import Navbar from '../components/layout/Navbar';
