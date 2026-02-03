@@ -28,7 +28,7 @@ const InfluencerHero = ({ categories, onSearch, onCategoryChange, selectedCatego
                         >
                             <option value="">All Artists</option>
                             {categories.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.label}</option>
+                                <option key={cat.id || cat._id} value={cat.id || cat._id}>{cat.label || cat.name}</option>
                             ))}
                         </select>
                         <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />

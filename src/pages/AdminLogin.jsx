@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../utils/axiosConfig';
+import api from '../api/axios';
 
 const AdminLogin = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const AdminLogin = () => {
         setLoading(true);
 
         try {
-            const response = await api.post('/auth/login', formData);
+            const response = await api.post('/api/admin/login', formData);
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             navigate('/admin/dashboard');

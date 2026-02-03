@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { getImageUrl } from '../../utils/axiosConfig';
 
 // Helper function to create URL-friendly slug from category label
-const createSlug = (label) => {
-    return label?.toLowerCase().replace(/\s+/g, '-') || '';
+const createSlug = (label, name) => {
+    const text = label || name || '';
+    return text.toLowerCase().replace(/\s+/g, '-') || '';
 };
 
 const CategoryGrid = ({ categories }) => {
@@ -38,12 +39,12 @@ const CategoryGrid = ({ categories }) => {
             <div className="container mx-auto px-4 lg:px-8">
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     {categories.map((cat, index) => {
-                        const slug = createSlug(cat.label);
-                        const categoryImg = getImageUrl(cat.image) || getFallbackImage(cat.label);
+                        const slug = createSlug(cat.label, cat.name);
+                        const categoryImg = getImageUrl(cat.image) || getFallbackImage(cat.label || cat.name);
 
                         return (
                             <motion.div
-                                key={cat.id}
+                                key={cat.id || cat._id}
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
@@ -55,10 +56,10 @@ const CategoryGrid = ({ categories }) => {
                                     {/* Background Image */}
                                     <img
                                         src={categoryImg}
-                                        alt={cat.label}
+                                        alt={cat.label || cat.name}
                                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60 group-hover:opacity-100"
                                         onError={(e) => {
-                                            e.target.src = getFallbackImage(cat.label);
+                                            e.target.src = getFallbackImage(cat.label || cat.name);
                                             e.target.onerror = null;
                                         }}
                                     />
@@ -66,7 +67,7 @@ const CategoryGrid = ({ categories }) => {
                                     {/* Overlay */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end justify-center p-4">
                                         <h4 className="text-white font-black text-center group-hover:text-primary transition-colors text-xs lg:text-sm uppercase tracking-widest italic leading-none">
-                                            {cat.label}
+                                            {cat.label || cat.name}
                                         </h4>
                                     </div>
                                 </Link>

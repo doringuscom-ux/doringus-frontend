@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useAdmin } from '../context/AdminContext';
 import { User, DollarSign, Video, Mail, LogOut, Instagram, Youtube, CheckCircle, Upload } from 'lucide-react';
-import api, { getImageUrl } from '../utils/axiosConfig';
+import api from '../api/axios';
+import { getImageUrl } from '../utils/axiosConfig';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/layout/Navbar';
@@ -36,7 +37,7 @@ const InfluencerDashboard = () => {
         const formData = new FormData();
         formData.append('image', file);
         try {
-            const res = await api.post('/upload', formData, {
+            const res = await api.post('/api/upload', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
             return res.data.url;

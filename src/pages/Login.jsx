@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../utils/axiosConfig';
+import api from '../api/axios';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const response = await api.post('/influencers/login', formData);
+            const response = await api.post('/api/influencers/login', formData);
             localStorage.setItem('token', response.data.token);
             localStorage.setItem('user', JSON.stringify(response.data.user));
             navigate('/influencer/dashboard');

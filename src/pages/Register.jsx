@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import api from '../utils/axiosConfig';
+import api from '../api/axios';
 import { User, Mail, Lock, CheckCircle, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Navbar from '../components/layout/Navbar';
@@ -18,7 +18,7 @@ const Register = () => {
         setError('');
 
         try {
-            const res = await api.post('/auth/register', formData);
+            const res = await api.post('/api/auth/register', formData);
             if (res.data.success) {
                 localStorage.setItem('token', res.data.token);
                 navigate('/');

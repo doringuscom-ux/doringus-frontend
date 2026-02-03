@@ -20,16 +20,16 @@ const InfluencerList = () => {
     const [searchQuery, setSearchQuery] = useState('');
 
     const activeCategories = useMemo(() => {
-        return categories.filter(c => c.status === 'Active');
+        return (categories || []).filter(c => !c.status || c.status === 'Active' || c.status === 'active');
     }, [categories]);
 
     // Find the category object by matching the slug from URL
     const selectedCategoryObj = useMemo(() => {
         if (!categorySlug) return null;
-        return activeCategories.find(cat => createSlug(cat.label) === categorySlug);
+        return activeCategories.find(cat => createSlug(cat.label || cat.name) === categorySlug);
     }, [categorySlug, activeCategories]);
 
-    const selectedCategory = selectedCategoryObj?.id || '';
+    const selectedCategory = selectedCategoryObj?.id || selectedCategoryObj?._id || '';
 
     const filteredInfluencers = useMemo(() => {
         return (influencers || []).filter(inf => {
@@ -37,7 +37,7 @@ const InfluencerList = () => {
                 (inf.username || '').toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesCategory = selectedCategory
-                ? inf.category?.toLowerCase() === selectedCategory.toLowerCase()
+                ? String(inf.category) === String(selectedCategory)
                 : true;
 
             const matchesLocation = cityParam
@@ -53,9 +53,9 @@ const InfluencerList = () => {
     }, [influencers, searchQuery, selectedCategory, cityParam]);
 
     const handleCategoryChange = (catId) => {
-        const cat = activeCategories.find(c => c.id === catId);
+        const cat = activeCategories.find(c => (c.id === catId || c._id === catId));
         if (cat) {
-            const slug = createSlug(cat.label);
+            const slug = createSlug(cat.label || cat.name);
             navigate(`/influencers/${slug}`);
         } else {
             navigate('/influencers');
@@ -123,7 +123,7 @@ const InfluencerList = () => {
                             <div className="flex items-center justify-between mb-12">
                                 <h2 className="text-3xl font-bold text-white">
                                     {selectedCategory
-                                        ? `${activeCategories.find(c => c.id === selectedCategory)?.label || 'Selected'} Creators`
+                                        ? `${activeCategories.find(c => (c.id === selectedCategory || c._id === selectedCategory))?.label || activeCategories.find(c => (c.id === selectedCategory || c._id === selectedCategory))?.name || 'Selected'} Creators`
                                         : 'All Creators'
                                     }
                                 </h2>
@@ -133,9 +133,10 @@ const InfluencerList = () => {
                             {filteredInfluencers.length > 0 ? (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                                     {filteredInfluencers.map((inf) => {
-                                        const categoryLabel = activeCategories.find(c => c.id === inf.category)?.label || 'Creator';
+                                        const catObj = activeCategories.find(c => (c.id === inf.category || c._id === inf.category));
+                                        const categoryLabel = catObj?.label || catObj?.name || 'Creator';
                                         return (
-                                            <Link key={inf.id} to={`/influencer/${inf.username}`} className="group">
+                                            <Link key={inf.id || inf._id} to={`/influencer/${inf.username}`} className="group">
                                                 <div className="relative aspect-square rounded-[2rem] overflow-hidden mb-5 bg-gray-900 border border-gray-800 shadow-xl">
                                                     <img
                                                         src={getImageUrl(inf.profileImage)}

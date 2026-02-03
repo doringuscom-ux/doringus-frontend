@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/axiosConfig';
+import api from '../api/axios';
+import { getImageUrl } from '../utils/axiosConfig';
 
 const AdminContext = createContext();
 
@@ -61,41 +62,25 @@ export const AdminProvider = ({ children }) => {
 
         try {
             console.log("[Context] Testing Backend Health...");
-            try {
-                const health = await api.get('/health');
-                console.log("[Context] Health Response:", health.data);
-
-                if (health.data.engine === 'DO RING US-Core-v3-Enterprise' || health.data.version === '2.0.1') {
-                    setServerStatus('Online');
-                } else if (health.data.status === 'ok') {
-                    setServerStatus('Online');
-                    console.log("[Context] Server version check passed with status OK.");
-                } else {
-                    setServerStatus('Unknown');
-                }
-            } catch (e) {
-                setServerStatus('Offline');
-                console.error("Backend unreachable at /health. Error:", e.message);
-            }
-
             const requests = [
-                api.get('/categories').catch(e => {
-                    console.error("[Context] Categories API Error:", e);
+                api.get('/api/health').catch(e => ({ data: { status: 'offline' } })),
+                api.get('/api/categories').catch(e => {
+                    console.error("[Context] Categories API Error:", e.message);
                     return { data: [] };
                 }),
-                api.get('/influencers').catch(e => {
-                    console.error("[Context] Influencers API Error:", e);
+                api.get('/api/influencers').catch(e => {
+                    console.error("[Context] Influencers API Error:", e.message);
                     return { data: [] };
                 }),
-                api.get('/inquiries').catch(e => ({ data: [] }))
+                api.get('/api/inquiries').catch(e => ({ data: [] }))
             ];
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
-                requests.push(api.get('/users').catch((e) => {
+                requests.push(api.get('/api/users').catch((e) => {
                     console.error("[Context] Users API Error:", e);
                     return { data: [] };
                 }));
-                requests.push(api.get('/campaigns').catch((e) => {
+                requests.push(api.get('/api/campaigns').catch((e) => {
                     console.error("[Context] Campaigns API Error:", e);
                     return { data: [] };
                 }));
@@ -103,25 +88,44 @@ export const AdminProvider = ({ children }) => {
 
             const results = await Promise.allSettled(requests);
 
-            if (results[0].status === 'fulfilled' && Array.isArray(results[0].value.data)) {
-                console.log(`[Context] Categories Loaded successfully: ${results[0].value.data.length} items`);
-                setCategories(results[0].value.data);
+            // 1. Health
+            const healthData = results[0].status === 'fulfilled' ? results[0].value.data : { status: 'offline' };
+            if (healthData.status === 'ok') setServerStatus('Online');
+            else setServerStatus('Offline');
+
+            // 2. Categories
+            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) {
+                setCategories(results[1].value.data);
             } else {
-                console.error("[Context] Categories Fetch Failed or data is not an array:", results[0]);
                 setCategories([]);
             }
-            if (results[1].status === 'fulfilled' && Array.isArray(results[1].value.data)) {
-                console.log(`[Context] Loaded ${results[1].value.data.length} influencers`);
-                setInfluencers(results[1].value.data);
+
+            // 3. Influencers
+            if (results[2].status === 'fulfilled' && Array.isArray(results[2].value.data)) {
+                setInfluencers(results[2].value.data);
             } else {
-                console.warn("[Context] Influencers data is not an array:", results[1].value?.data);
                 setInfluencers([]);
             }
-            if (results[2].status === 'fulfilled' && Array.isArray(results[2].value.data)) setInquiries(results[2].value.data);
+
+            // 4. Inquiries
+            if (results[3].status === 'fulfilled' && Array.isArray(results[3].value.data)) {
+                setInquiries(results[3].value.data);
+            }
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
-                if (results[3] && results[3].status === 'fulfilled' && Array.isArray(results[3].value.data)) setUsers(results[3].value.data);
-                if (results[4] && results[4].status === 'fulfilled' && Array.isArray(results[4].value.data)) setCampaigns(results[4].value.data);
+                // Adjusting indices based on the number of initial requests (4)
+                // If users and campaigns were added, they would be at index 4 and 5 respectively.
+                // However, the original code had a bug here, using results[3] for users which is inquiries.
+                // Assuming the intent was to get users from the 5th request (index 4) and campaigns from the 6th (index 5)
+                const usersResultIndex = 4;
+                const campaignsResultIndex = 5;
+
+                if (results[usersResultIndex] && results[usersResultIndex].status === 'fulfilled' && Array.isArray(results[usersResultIndex].value.data)) {
+                    setUsers(results[usersResultIndex].value.data);
+                }
+                if (results[campaignsResultIndex] && results[campaignsResultIndex].status === 'fulfilled' && Array.isArray(results[campaignsResultIndex].value.data)) {
+                    setCampaigns(results[campaignsResultIndex].value.data);
+                }
             }
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -140,15 +144,15 @@ export const AdminProvider = ({ children }) => {
 
     useEffect(() => {
         fetchData();
-        // Refresh every 30 seconds to keep system health updated - background refresh
-        const interval = setInterval(() => fetchData(true), 30000);
+        // Reduced refresh frequency to save server resources (60 seconds)
+        const interval = setInterval(() => fetchData(true), 60000);
         return () => clearInterval(interval);
     }, [user?.token, user?.role]);
 
     // Auth Actions
     const login = async (username, password) => {
         try {
-            const res = await api.post('/auth/login', { username, password });
+            const res = await api.post('/api/admin/login', { username, password });
             if (res.data.success) {
                 const { token, user: userData } = res.data;
                 const fullUser = { ...userData, token };
@@ -168,7 +172,7 @@ export const AdminProvider = ({ children }) => {
 
     const register = async (userData) => {
         try {
-            const res = await api.post('/auth/register', userData);
+            const res = await api.post('/api/auth/register', userData);
             if (res.data.success) {
                 const { token, user: userDataRes } = res.data;
                 const fullUser = { ...userDataRes, token };
@@ -187,7 +191,7 @@ export const AdminProvider = ({ children }) => {
     // Category Actions
     const addCategory = async (catData) => {
         try {
-            const res = await api.post('/categories', catData);
+            const res = await api.post('/api/categories', catData);
             setCategories(prev => [...prev, res.data]);
             return { success: true };
         } catch (e) {
@@ -197,7 +201,7 @@ export const AdminProvider = ({ children }) => {
 
     const updateCategory = async (id, catData) => {
         try {
-            await api.put(`/categories/${id}`, catData);
+            await api.put(`/api/categories/${id}`, catData);
             setCategories(prev => prev.map(cat => String(cat.id) === String(id) ? { ...cat, ...catData } : cat));
             return { success: true };
         } catch (e) {
@@ -207,7 +211,7 @@ export const AdminProvider = ({ children }) => {
 
     const deleteCategory = async (id) => {
         try {
-            await api.delete(`/categories/${id}`);
+            await api.delete(`/api/categories/${id}`);
             setCategories(prev => prev.filter(cat => String(cat.id) !== String(id)));
             return { success: true };
         } catch (e) {
@@ -218,7 +222,7 @@ export const AdminProvider = ({ children }) => {
     // Influencer Actions
     const addInfluencer = async (infData) => {
         try {
-            const res = await api.post('/influencers', infData);
+            const res = await api.post('/api/influencers', infData);
             setInfluencers(prev => [...prev, res.data]);
             return { success: true };
         } catch (e) {
@@ -228,7 +232,7 @@ export const AdminProvider = ({ children }) => {
 
     const updateInfluencer = async (id, infData) => {
         try {
-            const res = await api.put(`/influencers/update/${id}`, infData);
+            const res = await api.put(`/api/influencers/update/${id}`, infData);
             if (res.data.success) {
                 setInfluencers(prev => prev.map(inf => String(inf.id) === String(id) ? { ...inf, ...infData } : inf));
                 return { success: true };
@@ -241,7 +245,7 @@ export const AdminProvider = ({ children }) => {
 
     const deleteInfluencer = async (id) => {
         try {
-            const res = await api.delete(`/influencers/${id}`);
+            const res = await api.delete(`/api/influencers/${id}`);
             if (res.data.success) {
                 setInfluencers(prev => prev.filter(inf => String(inf.id) !== String(id)));
                 return { success: true };
@@ -254,7 +258,7 @@ export const AdminProvider = ({ children }) => {
 
     const updateInfluencerStatus = async (id, status) => {
         try {
-            const res = await api.put(`/influencers/status/${id}`, { status });
+            const res = await api.put(`/api/influencers/status/${id}`, { status });
             if (res.data.success) {
                 setInfluencers(prev => prev.map(inf => String(inf.id) === String(id) ? { ...inf, status } : inf));
                 return { success: true };
@@ -267,7 +271,7 @@ export const AdminProvider = ({ children }) => {
 
     const updateInfluencerProfile = async (id, data) => {
         try {
-            const res = await api.put(`/influencers/update/${id}`, data);
+            const res = await api.put(`/api/influencers/update/${id}`, data);
             if (res.data.success) {
                 setInfluencers(prev => prev.map(inf => String(inf.id) === String(id) ? { ...inf, ...data } : inf));
                 if (user && String(user.id) === String(id)) {
@@ -285,7 +289,7 @@ export const AdminProvider = ({ children }) => {
 
     const registerInfluencer = async (infData) => {
         try {
-            const res = await api.post('/influencers/register', infData);
+            const res = await api.post('/api/influencers/register', infData);
             return res.data;
         } catch (error) {
             return { success: false, message: error.response?.data?.message || 'Registration failed' };
@@ -295,7 +299,7 @@ export const AdminProvider = ({ children }) => {
     const loginInfluencer = async (credentials) => {
         try {
             console.log("[Context] Influencer Login:", credentials.email);
-            const res = await api.post('/influencers/login', credentials);
+            const res = await api.post('/api/influencers/login', credentials);
             if (res.data.success) {
                 const { token, user: userData } = res.data;
                 const fullUser = { ...userData, token, role: 'influencer' };
@@ -314,28 +318,28 @@ export const AdminProvider = ({ children }) => {
 
     const addUser = async (userData) => {
         try {
-            const res = await api.post('/users', userData);
+            const res = await api.post('/api/users', userData);
             setUsers(prev => [...prev, res.data]);
         } catch (e) { }
     };
 
     const deleteUser = async (id) => {
         try {
-            await api.delete(`/users/${id}`);
+            await api.delete(`/api/users/${id}`);
             setUsers(prev => prev.filter(u => String(u.id) !== String(id)));
         } catch (e) { }
     };
 
     const addCampaign = async (campData) => {
         try {
-            const res = await api.post('/campaigns', campData);
+            const res = await api.post('/api/campaigns', campData);
             setCampaigns(prev => [...prev, res.data]);
         } catch (e) { }
     };
 
     const addInquiry = async (inquiryData) => {
         try {
-            const res = await api.post('/inquiries', inquiryData);
+            const res = await api.post('/api/inquiries', inquiryData);
             setInquiries(prev => [res.data, ...prev]);
             return { success: true };
         } catch (error) {
@@ -345,14 +349,14 @@ export const AdminProvider = ({ children }) => {
 
     const deleteInquiry = async (id) => {
         try {
-            await api.delete(`/inquiries/${id}`);
+            await api.delete(`/api/inquiries/${id}`);
             setInquiries(prev => prev.filter(inq => String(inq.id) !== String(id)));
         } catch (e) { }
     };
 
     const updateInquiryStatus = async (id, status) => {
         try {
-            await api.put(`/inquiries/${id}/status`, { status });
+            await api.put(`/api/inquiries/${id}/status`, { status });
             setInquiries(prev => prev.map(inq => String(inq.id) === String(id) ? { ...inq, status } : inq));
             return { success: true };
         } catch (error) {

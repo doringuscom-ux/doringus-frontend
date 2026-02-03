@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Filter, Users } from 'lucide-react';
-import api, { getImageUrl } from '../utils/axiosConfig';
+import api from '../api/axios';
+import { getImageUrl } from '../utils/axiosConfig';
 
 const Influencers = () => {
     const [influencers, setInfluencers] = useState([]);
@@ -17,24 +18,29 @@ const Influencers = () => {
     const fetchData = async () => {
         try {
             const [influencersRes, categoriesRes] = await Promise.all([
-                api.get('/influencers'),
-                api.get('/categories')
+                api.get('/api/influencers'),
+                api.get('/api/categories')
             ]);
 
-            const approvedInfluencers = influencersRes.data.filter(inf => inf.status === 'Approved');
+            const approvedInfluencers = influencersRes.data.filter(
+                (item) => item.status?.toLowerCase() === 'approved'
+            );
+
             setInfluencers(approvedInfluencers);
             setCategories(categoriesRes.data);
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Influencer fetch error:', error);
         } finally {
             setLoading(false);
         }
     };
 
     const filteredInfluencers = influencers.filter(inf => {
-        const matchesSearch = inf.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            inf.username.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = selectedCategory === 'all' || inf.category === selectedCategory;
+        const matchesSearch = (inf.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (inf.username || '').toLowerCase().includes(searchTerm.toLowerCase());
+
+        // Hardened Category matching as per Step 7
+        const matchesCategory = selectedCategory === 'all' || String(inf.category) === String(selectedCategory);
         return matchesSearch && matchesCategory;
     });
 
@@ -73,18 +79,21 @@ const Influencers = () => {
                         >
                             All Categories
                         </button>
-                        {categories.map(cat => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setSelectedCategory(cat.name)}
-                                className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all ${selectedCategory === cat.name
-                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
-                                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                    }`}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
+                        {(categories || []).map(cat => {
+                            const catId = cat.id || cat._id;
+                            return (
+                                <button
+                                    key={catId}
+                                    onClick={() => setSelectedCategory(catId)}
+                                    className={`px-6 py-2 rounded-full font-medium whitespace-nowrap transition-all ${selectedCategory === catId
+                                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                                        }`}
+                                >
+                                    {cat.name || cat.label}
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 

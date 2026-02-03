@@ -4,10 +4,21 @@ import axios from 'axios';
 // In dev: uses '/api' (proxied by vite.config.js)
 // In prod: uses import.meta.env.VITE_API_URL + '/api'
 const getBaseUrl = () => {
-    const envUrl = import.meta.env.VITE_API_URL;
-    // Strictly use the environment variable.
-    // Ensure we point to /api if not already there
-    return envUrl && envUrl.endsWith('/api') ? envUrl : `${envUrl}/api`;
+    // Vite embeds this during build time
+    const envUrl = import.meta.env.VITE_API_BASE_URL;
+    const isProd = import.meta.env.PROD;
+
+    if (isProd) {
+        // In production, we MUST hit the Render backend directly.
+        const base = envUrl || 'https://doringus-backend.onrender.com/api';
+
+        // Ensure trailing slash
+        return base.endsWith('/') ? base : `${base}/`;
+    }
+
+    // Local Development: uses the env value if provided, or default to proxy
+    const localBase = envUrl || '/api/';
+    return localBase.endsWith('/') ? localBase : `${localBase}/`;
 };
 
 const baseURL = getBaseUrl();
