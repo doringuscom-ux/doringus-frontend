@@ -53,6 +53,17 @@ const InfluencerManagement = () => {
         setEditingId(null);
     };
 
+    const handleCategoryToggle = (catId) => {
+        const currentCategories = [...(formData.categories || [])];
+        const index = currentCategories.indexOf(catId);
+        if (index > -1) {
+            currentCategories.splice(index, 1);
+        } else {
+            currentCategories.push(catId);
+        }
+        setFormData({ ...formData, categories: currentCategories });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setActionLoading('submitting');
@@ -200,22 +211,23 @@ const InfluencerManagement = () => {
                                                     <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Unique Access ID (@)</label>
                                                     <input required value={formData.username || ''} onChange={e => setFormData({ ...formData, username: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="sarah_parker" />
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Genre Type</label>
-                                                        <select required value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-black border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all appearance-none">
-                                                            <option value="">Select Domain</option>
-                                                            {categories.map(cat => <option key={cat?.id} value={cat?.id}>{cat?.label}</option>)}
-                                                        </select>
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Main Location</label>
-                                                        <select required value={formData.location || ''} onChange={e => setFormData({ ...formData, location: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-black border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all appearance-none uppercase">
-                                                            <option value="">Select City</option>
-                                                            {['Chandigarh', 'Mumbai', 'Noida', 'Delhi', 'Bangalore', 'Pune', 'Hyderabad', 'Chennai', 'Kolkata', 'Ahmedabad', 'Gurgaon'].map(loc => (
-                                                                <option key={loc} value={loc.toLowerCase()}>{loc}</option>
-                                                            ))}
-                                                        </select>
+                                                <div className="space-y-4">
+                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Assigned Domains (Categories)</label>
+                                                    <div className="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-2xl max-h-48 overflow-y-auto no-scrollbar">
+                                                        {categories.map(cat => (
+                                                            <button
+                                                                key={cat.id}
+                                                                type="button"
+                                                                onClick={() => handleCategoryToggle(cat.id)}
+                                                                className={`flex items-center gap-2 p-3 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest ${(formData.categories || []).includes(cat.id)
+                                                                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                                                    : 'bg-white text-gray-400 hover:text-gray-600 border border-gray-100'
+                                                                    }`}
+                                                            >
+                                                                <div className={`w-2.5 h-2.5 rounded-full border-2 ${(formData.categories || []).includes(cat.id) ? 'bg-white border-white' : 'border-gray-200'}`} />
+                                                                {cat.label}
+                                                            </button>
+                                                        ))}
                                                     </div>
                                                 </div>
                                                 {!editingId && (
@@ -248,6 +260,10 @@ const InfluencerManagement = () => {
                                         <div className="space-y-2">
                                             <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Identity Source (Avatar URL)</label>
                                             <input required value={formData.profileImage || ''} onChange={e => setFormData({ ...formData, profileImage: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="https://..." />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Main Location</label>
+                                            <input required value={formData.location || ''} onChange={e => setFormData({ ...formData, location: e.target.value })} className="w-full px-6 py-4 bg-gray-50 rounded-2xl font-bold border-none outline-none focus:bg-white focus:ring-4 focus:ring-primary/5 transition-all" placeholder="Mumbai, Maharashtra" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-2">Verification Status</label>
@@ -303,8 +319,16 @@ const InfluencerManagement = () => {
                                         <p className="text-sm text-primary font-black uppercase tracking-widest mt-1">@{inf?.username || 'user'}</p>
                                     </div>
 
-                                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                                        <span className="px-4 py-2 bg-gray-100 text-gray-500 text-[10px] rounded-xl font-black uppercase tracking-widest border border-gray-100/50">{inf?.category || 'None'}</span>
+                                    <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                                        {(inf?.categories && inf.categories.length > 0) ? (
+                                            inf.categories.map(catId => (
+                                                <span key={catId} className="px-3 py-1.5 bg-gray-100 text-gray-500 text-[9px] rounded-lg font-black uppercase tracking-widest border border-gray-100/50">
+                                                    {categories.find(c => c.id === catId)?.label || catId}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <span className="px-4 py-2 bg-gray-100 text-gray-500 text-[10px] rounded-xl font-black uppercase tracking-widest border border-gray-100/50">{inf?.category || 'None'}</span>
+                                        )}
                                         <span className={`px-4 py-2 text-[10px] rounded-xl font-black uppercase tracking-widest border flex items-center gap-2 ${inf?.status === 'Approved' ? 'bg-emerald-100/50 text-emerald-600 border-emerald-100' :
                                             inf?.status === 'Pending' ? 'bg-amber-100/50 text-amber-600 border-amber-100' : 'bg-rose-100/50 text-rose-600 border-rose-100'
                                             }`}>

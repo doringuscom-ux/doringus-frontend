@@ -180,6 +180,22 @@ const InfluencerDetail = () => {
                                         <Star className="w-5 h-5 fill-current" />
                                         {influencer.rating || '5.0'}
                                     </div>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(influencer.categories && influencer.categories.length > 0) ? (
+                                            influencer.categories.map(catId => {
+                                                const cat = (useAdmin().categories || []).find(c => c.id === catId || c._id === catId);
+                                                return (
+                                                    <span key={catId} className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest rounded-full border border-primary/20">
+                                                        {cat?.label || cat?.name || catId}
+                                                    </span>
+                                                );
+                                            })
+                                        ) : (
+                                            <span className="px-4 py-1.5 bg-primary/10 text-primary text-xs font-black uppercase tracking-widest rounded-full border border-primary/20">
+                                                {influencer.category || 'Creator'}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

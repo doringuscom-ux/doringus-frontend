@@ -37,7 +37,9 @@ const InfluencerList = () => {
                 (inf.username || '').toLowerCase().includes(searchQuery.toLowerCase());
 
             const matchesCategory = selectedCategory
-                ? String(inf.category) === String(selectedCategory)
+                ? (inf.categories && Array.isArray(inf.categories)
+                    ? inf.categories.some(cat => String(cat) === String(selectedCategory))
+                    : String(inf.category) === String(selectedCategory))
                 : true;
 
             const matchesLocation = cityParam
@@ -146,8 +148,21 @@ const InfluencerList = () => {
                                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                                 </div>
                                                 <h3 className="text-xl font-bold text-white group-hover:text-primary transition-colors mb-1">{inf.name}</h3>
-                                                <p className="text-primary font-bold text-sm uppercase tracking-wider mb-1">{categoryLabel}</p>
-                                                <p className="text-gray-400 font-medium">{inf.followers} Followers</p>
+                                                <div className="flex flex-wrap gap-2 mb-1">
+                                                    {(inf.categories && inf.categories.length > 0) ? (
+                                                        inf.categories.map(catId => {
+                                                            const cObj = activeCategories.find(c => (c.id === catId || c._id === catId));
+                                                            return (
+                                                                <span key={catId} className="text-primary font-bold text-[10px] uppercase tracking-wider bg-primary/10 px-2 py-0.5 rounded-md">
+                                                                    {cObj?.label || cObj?.name || catId}
+                                                                </span>
+                                                            );
+                                                        })
+                                                    ) : (
+                                                        <p className="text-primary font-bold text-sm uppercase tracking-wider">{categoryLabel}</p>
+                                                    )}
+                                                </div>
+                                                <p className="text-gray-400 font-medium">{inf.followers || inf.instagramFollowers || '0'} Followers</p>
                                             </Link>
                                         );
                                     })}

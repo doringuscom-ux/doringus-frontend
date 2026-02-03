@@ -26,7 +26,7 @@ const InfluencerRegister = () => {
         pricePerReel: '',
         youtubePromotionPrice: '',
         collaborationPrice: '',
-        category: 'fashion', // Fixed default to match existing categories
+        categories: [], // Support multiple categories
         location: ''
     });
 
@@ -34,6 +34,17 @@ const InfluencerRegister = () => {
 
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleCategoryToggle = (catId) => {
+        const currentCategories = [...(formData.categories || [])];
+        const index = currentCategories.indexOf(catId);
+        if (index > -1) {
+            currentCategories.splice(index, 1);
+        } else {
+            currentCategories.push(catId);
+        }
+        setFormData({ ...formData, categories: currentCategories });
     };
 
     const nextStep = () => setStep(step + 1);
@@ -177,25 +188,39 @@ const InfluencerRegister = () => {
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Category</label>
-                                                    <div className="relative group">
-                                                        <select
-                                                            required
-                                                            name="category"
-                                                            value={formData.category}
-                                                            onChange={handleInputChange}
-                                                            className="w-full pl-6 pr-6 py-4 bg-gray-50 border border-transparent rounded-2xl outline-none focus:bg-white focus:border-primary/20 focus:ring-4 focus:ring-primary/10 transition-all font-bold appearance-none cursor-pointer"
-                                                        >
-                                                            <option value="" disabled>Select Category</option>
-                                                            {categories.length > 0 ? (
-                                                                categories.map(cat => (
-                                                                    <option key={cat.id} value={cat.id}>{cat.label}</option>
-                                                                ))
-                                                            ) : (
-                                                                <option value="fashion">Fashion (Default)</option>
-                                                            )}
-                                                        </select>
-                                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none">▼</div>
+                                                    <label className="text-xs font-black uppercase tracking-widest text-gray-400 ml-4">Categories (Select one or more)</label>
+                                                    <div className="grid grid-cols-2 gap-2 p-2 bg-gray-50 rounded-2xl max-h-40 overflow-y-auto no-scrollbar">
+                                                        {categories.length > 0 ? (
+                                                            categories.map(cat => (
+                                                                <button
+                                                                    key={cat.id}
+                                                                    type="button"
+                                                                    onClick={() => handleCategoryToggle(cat.id)}
+                                                                    className={`flex items-center gap-2 p-3 rounded-xl transition-all text-xs font-black uppercase tracking-widest ${formData.categories.includes(cat.id)
+                                                                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                                                            : 'bg-white text-gray-400 hover:text-gray-600 border border-gray-100'
+                                                                        }`}
+                                                                >
+                                                                    <div className={`w-3 h-3 rounded-full border-2 ${formData.categories.includes(cat.id) ? 'bg-white border-white' : 'border-gray-200'}`} />
+                                                                    {cat.label}
+                                                                </button>
+                                                            ))
+                                                        ) : (
+                                                            ['fashion', 'tech', 'travel', 'food'].map(cat => (
+                                                                <button
+                                                                    key={cat}
+                                                                    type="button"
+                                                                    onClick={() => handleCategoryToggle(cat)}
+                                                                    className={`flex items-center gap-2 p-3 rounded-xl transition-all text-xs font-black uppercase tracking-widest ${formData.categories.includes(cat)
+                                                                            ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                                                                            : 'bg-white text-gray-400 hover:text-gray-600 border border-gray-100'
+                                                                        }`}
+                                                                >
+                                                                    <div className={`w-3 h-3 rounded-full border-2 ${formData.categories.includes(cat) ? 'bg-white border-white' : 'border-gray-200'}`} />
+                                                                    {cat}
+                                                                </button>
+                                                            ))
+                                                        )}
                                                     </div>
                                                 </div>
                                                 <div className="space-y-2">
