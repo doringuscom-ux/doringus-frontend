@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../api/axios';
-import { getImageUrl } from '../utils/axiosConfig';
+import api, { getImageUrl } from '../utils/axiosConfig';
 
 const AdminContext = createContext();
 
@@ -17,6 +16,7 @@ export const AdminProvider = ({ children }) => {
     const [influencers, setInfluencers] = useState([]);
     const [users, setUsers] = useState([]);
     const [campaigns, setCampaigns] = useState([]);
+    const [locations, setLocations] = useState([]); // Added locations state
     const [user, setUser] = useState(() => {
         const savedToken = localStorage.getItem('sa_token');
         const savedUser = localStorage.getItem('sa_user');
@@ -72,10 +72,14 @@ export const AdminProvider = ({ children }) => {
                     console.error("[Context] Influencers API Error:", e.message);
                     return { data: [] };
                 }),
-                api.get('/api/inquiries').catch(e => ({ data: [] }))
+                api.get('/api/locations').catch(e => {
+                    console.error("[Context] Locations API Error:", e.message);
+                    return { data: [] };
+                })
             ];
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
+                requests.push(api.get('/api/inquiries').catch(e => ({ data: [] })));
                 requests.push(api.get('/api/users').catch((e) => {
                     console.error("[Context] Users API Error:", e);
                     return { data: [] };
@@ -107,19 +111,22 @@ export const AdminProvider = ({ children }) => {
                 setInfluencers([]);
             }
 
-            // 4. Inquiries
+            // 4. Locations
             if (results[3].status === 'fulfilled' && Array.isArray(results[3].value.data)) {
-                setInquiries(results[3].value.data);
+                setLocations(results[3].value.data);
+            } else {
+                setLocations([]);
             }
 
             if (user?.token && (user.role === 'admin' || user.role === 'superadmin')) {
-                // Adjusting indices based on the number of initial requests (4)
-                // If users and campaigns were added, they would be at index 4 and 5 respectively.
-                // However, the original code had a bug here, using results[3] for users which is inquiries.
-                // Assuming the intent was to get users from the 5th request (index 4) and campaigns from the 6th (index 5)
-                const usersResultIndex = 4;
-                const campaignsResultIndex = 5;
+                // Adjusting indices based on the number of initial requests (4 now: health, categories, influencers, locations)
+                const inquiriesResultIndex = 4;
+                const usersResultIndex = 5;
+                const campaignsResultIndex = 6;
 
+                if (results[inquiriesResultIndex] && results[inquiriesResultIndex].status === 'fulfilled' && Array.isArray(results[inquiriesResultIndex].value.data)) {
+                    setInquiries(results[inquiriesResultIndex].value.data);
+                }
                 if (results[usersResultIndex] && results[usersResultIndex].status === 'fulfilled' && Array.isArray(results[usersResultIndex].value.data)) {
                     setUsers(results[usersResultIndex].value.data);
                 }
@@ -212,10 +219,31 @@ export const AdminProvider = ({ children }) => {
     const deleteCategory = async (id) => {
         try {
             await api.delete(`/api/categories/${id}`);
-            setCategories(prev => prev.filter(cat => String(cat.id) !== String(id)));
+            setCategories(prev => prev.filter(c => (c.id !== id && c._id !== id)));
             return { success: true };
-        } catch (e) {
-            return { success: false, message: e.response?.data?.message || 'Failed' };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Delete failed' };
+        }
+    };
+
+    // Location Actions
+    const addLocation = async (locData) => {
+        try {
+            const res = await api.post('/api/locations', locData);
+            setLocations(prev => [...prev, res.data]);
+            return { success: true, data: res.data };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Failed to add location' };
+        }
+    };
+
+    const deleteLocation = async (id) => {
+        try {
+            await api.delete(`/api/locations/${id}`);
+            setLocations(prev => prev.filter(l => (l.id !== id && l._id !== id)));
+            return { success: true };
+        } catch (error) {
+            return { success: false, message: error.response?.data?.message || 'Delete failed' };
         }
     };
 
@@ -382,6 +410,7 @@ export const AdminProvider = ({ children }) => {
         users,
         campaigns,
         inquiries,
+        locations, // Added to context value
         user,
         loading,
         serverStatus,
@@ -391,6 +420,8 @@ export const AdminProvider = ({ children }) => {
         addCategory,
         updateCategory,
         deleteCategory,
+        addLocation, // Added to context value
+        deleteLocation, // Added to context value
         addInfluencer,
         updateInfluencer,
         deleteInfluencer,
